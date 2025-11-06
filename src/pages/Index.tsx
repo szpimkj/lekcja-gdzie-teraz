@@ -95,7 +95,7 @@ const Index = () => {
               <img 
                 src={breakImage} 
                 alt="Przerwa" 
-                className="w-full max-w-md mx-auto rounded-lg shadow-medium"
+                className="w-64 mx-auto rounded-lg shadow-medium"
               />
               <h2 className="text-2xl font-bold text-primary">
                 Uff! Masz teraz przerwę. Następne zajęcia to:
@@ -168,7 +168,7 @@ const Index = () => {
             <img 
               src={breakImage} 
               alt="Przerwa" 
-              className="w-full max-w-md mx-auto rounded-lg shadow-medium"
+              className="w-64 mx-auto rounded-lg shadow-medium"
             />
             <h2 className="text-2xl font-bold text-primary">
               Uff! Masz teraz przerwę. Następne zajęcia to:
