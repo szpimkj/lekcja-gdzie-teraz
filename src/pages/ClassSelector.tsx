@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { DateTime } from 'luxon';
 import { ClassInfo } from '@/types/schedule';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
@@ -13,16 +14,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { GraduationCap, ArrowRight } from 'lucide-react';
+import { GraduationCap, ArrowRight, Clock } from 'lucide-react';
 
 const ClassSelector = () => {
   const [classes, setClasses] = useState<ClassInfo[]>([]);
   const [selectedClass, setSelectedClass] = useState<ClassInfo | null>(null);
   const [selectedSubgroup, setSelectedSubgroup] = useState<string>('');
+  const [currentTime, setCurrentTime] = useState(DateTime.now().setZone('Europe/Warsaw'));
   
   const { setClass, setSubgroup, language, class_id } = useSettingsStore();
   const t = translations[language];
   const navigate = useNavigate();
+
+  // Update time every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(DateTime.now().setZone('Europe/Warsaw'));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     fetch('/data/classes.json')
@@ -51,16 +61,40 @@ const ClassSelector = () => {
   // If already has a class, show option to change or continue
   const hasClass = class_id !== null;
 
+  // Format current date and time
+  const weekdayNames = {
+    pl: ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'],
+    en: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+  };
+  const weekdayName = weekdayNames[language][currentTime.weekday - 1];
+  const formattedDate = currentTime.toFormat('dd.MM.yyyy');
+  const formattedTime = currentTime.toFormat('HH:mm:ss');
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm">
-        <div className="container max-w-2xl mx-auto px-4 py-6 text-center">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <GraduationCap className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold text-foreground">Gdzie mam lekcję?</h1>
+        <div className="container max-w-2xl mx-auto px-4 py-6">
+          {/* Date and Time Display */}
+          <div className="flex items-center justify-center gap-2 mb-4 text-muted-foreground">
+            <Clock className="h-4 w-4" />
+            <div className="text-sm font-medium">
+              <span>{weekdayName}</span>
+              <span className="mx-2">•</span>
+              <span>{formattedDate}</span>
+              <span className="mx-2">•</span>
+              <span className="font-mono">{formattedTime}</span>
+            </div>
           </div>
-          <p className="text-muted-foreground">{t.chooseClass}</p>
+
+          {/* Title */}
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <GraduationCap className="h-8 w-8 text-primary" />
+              <h1 className="text-2xl font-bold text-foreground">Gdzie mam lekcję?</h1>
+            </div>
+            <p className="text-muted-foreground">{t.chooseClass}</p>
+          </div>
         </div>
       </header>
 
