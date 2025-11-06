@@ -1,0 +1,23 @@
+[
+  {
+    "class_id": "1a",
+    "class_label": "1 a",
+    "subgroups": [
+      { "subgroup_id": "gr1", "subgroup_label": "1. Grupa" },
+      { "subgroup_id": "gr2", "subgroup_label": "2. Grupa" }
+    ]
+  },
+  {
+    "class_id": "2b",
+    "class_label": "2 b",
+    "subgroups": [
+      { "subgroup_id": "boys", "subgroup_label": "Chłopcy" },
+      { "subgroup_id": "girls", "subgroup_label": "Dziewczęta" }
+    ]
+  },
+  {
+    "class_id": "7c",
+    "class_label": "VII c",
+    "subgroups": []
+  }
+]
