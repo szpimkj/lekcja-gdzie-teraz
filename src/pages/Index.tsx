@@ -86,7 +86,7 @@ const Index = () => {
     if (Array.isArray(currentInfo)) {
       // Multiple subgroups - show as tiles next to each other
       const firstInfo = currentInfo[0];
-      const isBreakTime = firstInfo.status === 'next';
+      const isBreakTime = firstInfo.status === 'next' || firstInfo.status === 'end-of-day';
       
       return (
         <div className="space-y-4">
@@ -159,7 +159,7 @@ const Index = () => {
     }
 
     // Single lesson
-    const isBreakTime = currentInfo.status === 'next';
+    const isBreakTime = currentInfo.status === 'next' || currentInfo.status === 'end-of-day';
     
     return (
       <div className="space-y-4">
