@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { LessonCard } from '@/components/LessonCard';
 import { ClassPicker } from '@/components/ClassPicker';
+import { BottomNav } from '@/components/BottomNav';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { getCurrentOrNextLesson } from '@/lib/scheduleLogic';
 import { Lesson, CurrentLessonInfo } from '@/types/schedule';
-import { Settings, Calendar, CalendarDays } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Index = () => {
@@ -147,7 +148,7 @@ const Index = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container max-w-2xl mx-auto px-4 py-8 space-y-6">
+      <main className="container max-w-2xl mx-auto px-4 py-8 pb-28 space-y-6">
         {/* Big Main Button */}
         <div className="text-center space-y-6">
           <Button
@@ -159,27 +160,7 @@ const Index = () => {
             {t.mainButton}
           </Button>
 
-          {/* Quick Actions */}
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={() => navigate('/today')}
-              disabled={!class_id}
-              className="flex-1 gap-2"
-            >
-              <Calendar className="h-4 w-4" />
-              {t.showDayPlan}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => navigate('/week')}
-              disabled={!class_id}
-              className="flex-1 gap-2"
-            >
-              <CalendarDays className="h-4 w-4" />
-              {t.showWeekPlan}
-            </Button>
-          </div>
+          {/* Removed quick action buttons - now using bottom nav */}
         </div>
 
         {/* Current/Next Lesson Display */}
@@ -198,6 +179,7 @@ const Index = () => {
         )}
       </main>
 
+      <BottomNav />
       <ClassPicker open={showClassPicker} onOpenChange={setShowClassPicker} />
     </div>
   );

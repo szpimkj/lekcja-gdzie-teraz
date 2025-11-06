@@ -12,9 +12,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ClassPicker } from '@/components/ClassPicker';
+import { BottomNav } from '@/components/BottomNav';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
-import { ArrowLeft } from 'lucide-react';
 
 const Settings = () => {
   const [showClassPicker, setShowClassPicker] = useState(false);
@@ -37,21 +37,13 @@ const Settings = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10 shadow-soft">
-        <div className="container max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/')}
-            className="hover:bg-secondary"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-lg font-bold text-foreground">{t.settings}</h1>
+        <div className="container max-w-2xl mx-auto px-4 py-4">
+          <h1 className="text-lg font-bold text-foreground text-center">{t.settings}</h1>
         </div>
       </header>
 
       {/* Content */}
-      <main className="container max-w-2xl mx-auto px-4 py-8 space-y-6">
+      <main className="container max-w-2xl mx-auto px-4 py-8 pb-28 space-y-6">
         {/* Class Selection */}
         <Card>
           <CardHeader>
@@ -127,6 +119,7 @@ const Settings = () => {
         </Card>
       </main>
 
+      <BottomNav />
       <ClassPicker open={showClassPicker} onOpenChange={setShowClassPicker} />
     </div>
   );

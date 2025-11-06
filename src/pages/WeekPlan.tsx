@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { BottomNav } from '@/components/BottomNav';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { Lesson, Weekday } from '@/types/schedule';
-import { ArrowLeft, Clock, MapPin } from 'lucide-react';
+import { Clock, MapPin } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const WeekPlan = () => {
@@ -57,16 +58,8 @@ const WeekPlan = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10 shadow-soft">
-        <div className="container max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/')}
-            className="hover:bg-secondary"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
+        <div className="container max-w-4xl mx-auto px-4 py-4">
+          <div className="text-center">
             <h1 className="text-lg font-bold text-foreground">{t.showWeekPlan}</h1>
             <p className="text-sm text-muted-foreground">{class_label}</p>
           </div>
@@ -74,7 +67,7 @@ const WeekPlan = () => {
       </header>
 
       {/* Content */}
-      <main className="container max-w-4xl mx-auto px-4 py-8">
+      <main className="container max-w-4xl mx-auto px-4 py-8 pb-28">
         {loading && (
           <Alert>
             <AlertDescription className="text-center">
@@ -137,6 +130,8 @@ const WeekPlan = () => {
           </Tabs>
         )}
       </main>
+
+      <BottomNav />
     </div>
   );
 };

@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { LessonCard } from '@/components/LessonCard';
+import { BottomNav } from '@/components/BottomNav';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { getCurrentWeekday } from '@/lib/scheduleLogic';
 import { Lesson } from '@/types/schedule';
-import { ArrowLeft } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const TodayPlan = () => {
@@ -52,16 +52,8 @@ const TodayPlan = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10 shadow-soft">
-        <div className="container max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/')}
-            className="hover:bg-secondary"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
+        <div className="container max-w-2xl mx-auto px-4 py-4">
+          <div className="text-center">
             <h1 className="text-lg font-bold text-foreground">{t.showDayPlan}</h1>
             <p className="text-sm text-muted-foreground">{class_label}</p>
           </div>
@@ -69,7 +61,7 @@ const TodayPlan = () => {
       </header>
 
       {/* Content */}
-      <main className="container max-w-2xl mx-auto px-4 py-8 space-y-4">
+      <main className="container max-w-2xl mx-auto px-4 py-8 pb-28 space-y-4">
         {loading && (
           <Alert>
             <AlertDescription className="text-center">
@@ -90,6 +82,8 @@ const TodayPlan = () => {
           <LessonCard key={idx} lesson={lesson} />
         ))}
       </main>
+
+      <BottomNav />
     </div>
   );
 };
