@@ -37,9 +37,28 @@ const ClassSelector = () => {
     navigate('/now');
   };
 
-  // Group classes by grade level (extract number from class_label)
+  // Group classes by grade level (extract number from class_label, handle Roman numerals)
+  const romanToArabic = (roman: string): number => {
+    const romanMap: { [key: string]: number } = {
+      'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5, 
+      'VI': 6, 'VII': 7, 'VIII': 8, 'IX': 9, 'X': 10
+    };
+    return romanMap[roman] || 0;
+  };
+
   const groupedClasses = classes.reduce((acc, cls) => {
-    const grade = cls.class_label.match(/\d+/)?.[0] || 'Inne';
+    // Try to match Roman numerals first
+    const romanMatch = cls.class_label.match(/\b([IVX]+)\b/);
+    let grade: string;
+    
+    if (romanMatch) {
+      const arabicNum = romanToArabic(romanMatch[1]);
+      grade = arabicNum > 0 ? arabicNum.toString() : 'Inne';
+    } else {
+      // Fall back to Arabic numerals
+      grade = cls.class_label.match(/\d+/)?.[0] || 'Inne';
+    }
+    
     if (!acc[grade]) acc[grade] = [];
     acc[grade].push(cls);
     return acc;
@@ -100,7 +119,7 @@ const ClassSelector = () => {
                   </h2>
                   <div className="flex gap-3 flex-wrap">
                     {groupedClasses[grade].map((classInfo) => {
-                      const classLetter = classInfo.class_label.replace(/\d+/g, '').trim();
+                      const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim();
                       return (
                         <button
                           key={classInfo.class_id}
