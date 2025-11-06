@@ -17,7 +17,7 @@ const Index = () => {
   const [showClassPicker, setShowClassPicker] = useState(false);
   const [loading, setLoading] = useState(false);
   
-  const { class_id, class_label, subgroup_id, language } = useSettingsStore();
+  const { class_id, class_label, subgroup_id, subgroup_label, language } = useSettingsStore();
   const t = translations[language];
   const navigate = useNavigate();
 
@@ -130,20 +130,18 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10 shadow-soft">
-        <div className="container max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
+        <div className="container max-w-2xl mx-auto px-4 py-4">
+          <button
+            onClick={() => setShowClassPicker(true)}
+            className="w-full text-center hover:bg-secondary/50 rounded-lg px-4 py-2 transition-smooth"
+          >
             <h1 className="text-lg font-bold text-foreground">
               {class_label || t.noClass}
             </h1>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/settings')}
-            className="hover:bg-secondary"
-          >
-            <Settings className="h-5 w-5" />
-          </Button>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {subgroup_label || t.selectClass}
+            </p>
+          </button>
         </div>
       </header>
 
