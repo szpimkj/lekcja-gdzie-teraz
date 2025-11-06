@@ -49,9 +49,26 @@ const WeekPlan = () => {
   }, [class_id, subgroup_id]);
 
   const getLessonsForDay = (weekday: Weekday) => {
-    return lessons
+    const dayLessons = lessons
       .filter(l => l.weekday === weekday)
       .sort((a, b) => a.period - b.period);
+    
+    // Group by period to show simultaneous classes together
+    const groupedByPeriod = dayLessons.reduce((acc, lesson) => {
+      const key = `${lesson.period}-${lesson.start_time}`;
+      if (!acc[key]) {
+        acc[key] = {
+          period: lesson.period,
+          start_time: lesson.start_time,
+          end_time: lesson.end_time,
+          lessons: []
+        };
+      }
+      acc[key].lessons.push(lesson);
+      return acc;
+    }, {} as Record<string, { period: number; start_time: string; end_time: string; lessons: Lesson[] }>);
+    
+    return Object.values(groupedByPeriod);
   };
 
   return (
@@ -87,7 +104,7 @@ const WeekPlan = () => {
             </TabsList>
 
             {weekdays.map((day) => (
-              <TabsContent key={day.key} value={day.key} className="space-y-3">
+              <TabsContent key={day.key} value={day.key} className="space-y-4">
                 {getLessonsForDay(day.key).length === 0 ? (
                   <Alert>
                     <AlertDescription className="text-center">
@@ -95,34 +112,39 @@ const WeekPlan = () => {
                     </AlertDescription>
                   </Alert>
                 ) : (
-                  getLessonsForDay(day.key).map((lesson, idx) => (
-                    <Card key={idx} className="p-4 transition-smooth hover:shadow-medium">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <h3 className="font-bold text-lg text-foreground mb-1">
-                            {lesson.subject}
-                          </h3>
-                          {lesson.subgroup_label && (
-                            <p className="text-sm text-muted-foreground mb-2">
-                              {lesson.subgroup_label}
-                            </p>
-                          )}
-                          <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1">
+                  getLessonsForDay(day.key).map((group, idx) => (
+                    <div key={idx} className="space-y-2">
+                      {/* Time header for this period */}
+                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-4 w-4" />
+                          <span className="font-medium">{group.start_time} - {group.end_time}</span>
+                        </div>
+                        <span className="text-primary font-medium">
+                          {t.period} {group.period}
+                        </span>
+                      </div>
+                      
+                      {/* Lessons as tiles */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {group.lessons.map((lesson, lessonIdx) => (
+                          <Card key={lessonIdx} className="p-4 transition-smooth hover:shadow-medium">
+                            <h3 className="font-bold text-base text-foreground mb-2">
+                              {lesson.subject}
+                            </h3>
+                            {lesson.subgroup_label && (
+                              <p className="text-xs text-muted-foreground mb-2">
+                                {lesson.subgroup_label}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
                               <MapPin className="h-3 w-3" />
                               <span>{lesson.room}</span>
                             </div>
-                            <div className="flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
-                              <span>{lesson.start_time} - {lesson.end_time}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-sm font-medium text-primary">
-                          {t.period} {lesson.period}
-                        </div>
+                          </Card>
+                        ))}
                       </div>
-                    </Card>
+                    </div>
                   ))
                 )}
               </TabsContent>
