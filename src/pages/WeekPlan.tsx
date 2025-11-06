@@ -116,17 +116,13 @@ const WeekPlan = () => {
                     <div key={idx} className="flex gap-4 items-start">
                       {/* Time and period on the left */}
                       <div className="flex flex-col gap-1 min-w-[120px] pt-4">
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Clock className="h-4 w-4" />
-                          <span className="font-medium">{group.start_time}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Clock className="h-4 w-4 opacity-0" />
-                          <span className="font-medium">{group.end_time}</span>
-                        </div>
-                        <span className="text-primary font-medium text-sm mt-1">
+                        <span className="text-primary font-medium text-sm mb-1">
                           {t.period} {group.period}
                         </span>
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <Clock className="h-4 w-4" />
+                          <span className="font-medium">{group.start_time} - {group.end_time}</span>
+                        </div>
                       </div>
                       
                       {/* Lessons as tiles on the right */}
