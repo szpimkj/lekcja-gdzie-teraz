@@ -155,9 +155,16 @@ export function getCurrentOrNextLesson(
   
   if (tomorrowLessons.length > 0) {
     const firstLesson = tomorrowLessons.sort((a, b) => a.period - b.period)[0];
+    
+    // Calculate minutes until tomorrow's lesson
+    const lessonTime = parseTime(firstLesson.start_time);
+    const tomorrow = now.plus({ days: 1 }).set({ hour: lessonTime.hour, minute: lessonTime.minute, second: 0 });
+    const minutesUntil = Math.floor(tomorrow.diff(now, 'minutes').minutes);
+    
     return {
       lesson: firstLesson,
       status: 'end-of-day',
+      minutesUntil,
       message: `${translations[language].endOfDay}. ${translations[language].nextLessonTomorrow}: ${firstLesson.subject} ${firstLesson.start_time} — ${translations[language].room} ${firstLesson.room}`,
     };
   }
