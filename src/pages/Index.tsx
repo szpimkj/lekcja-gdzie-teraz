@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { LessonCard } from '@/components/LessonCard';
 import { ClassPicker } from '@/components/ClassPicker';
 import { BottomNav } from '@/components/BottomNav';
@@ -8,7 +9,7 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { getCurrentOrNextLesson } from '@/lib/scheduleLogic';
 import { Lesson, CurrentLessonInfo } from '@/types/schedule';
-import { Settings } from 'lucide-react';
+import { Settings, Clock, MapPin } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Index = () => {
@@ -82,23 +83,54 @@ const Index = () => {
     }
 
     if (Array.isArray(currentInfo)) {
-      // Multiple subgroups
+      // Multiple subgroups - show as tiles next to each other
+      const firstInfo = currentInfo[0];
       return (
         <div className="space-y-4">
-          {currentInfo.map((info, idx) => (
-            <LessonCard
-              key={idx}
-              lesson={info.lesson}
-              status={info.status === 'current' ? 'current' : 'next'}
-              minutesInfo={
-                info.minutesRemaining 
-                  ? `${t.remaining} ${info.minutesRemaining} ${t.minutesShort}`
-                  : info.minutesUntil 
-                    ? `${t.in} ${info.minutesUntil} ${t.minutesShort}`
-                    : undefined
-              }
-            />
-          ))}
+          <div className="flex gap-4 items-start">
+            {/* Time and period on the left */}
+            <div className="flex flex-col gap-1 min-w-[120px] pt-4">
+              <span className="text-primary font-medium text-sm mb-1">
+                {t.period} {firstInfo.lesson.period}
+              </span>
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <Clock className="h-4 w-4" />
+                <span className="font-medium">{firstInfo.lesson.start_time} - {firstInfo.lesson.end_time}</span>
+              </div>
+              {firstInfo.minutesRemaining && (
+                <div className="text-sm text-accent font-medium mt-2">
+                  {t.remaining} {firstInfo.minutesRemaining} {t.minutesShort}
+                </div>
+              )}
+              {firstInfo.minutesUntil && (
+                <div className="text-sm text-primary font-medium mt-2">
+                  {t.in} {firstInfo.minutesUntil} {t.minutesShort}
+                </div>
+              )}
+            </div>
+            
+            {/* Lessons as tiles on the right */}
+            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {currentInfo.map((info, idx) => (
+                <Card key={idx} className={`p-4 transition-smooth hover:shadow-medium ${
+                  info.status === 'current' ? 'border-accent border-2' : ''
+                }`}>
+                  <h3 className="font-bold text-base text-foreground mb-2">
+                    {info.lesson.subject}
+                  </h3>
+                  {info.lesson.subgroup_label && (
+                    <p className="text-xs text-muted-foreground mb-2">
+                      {info.lesson.subgroup_label}
+                    </p>
+                  )}
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <MapPin className="h-3 w-3" />
+                    <span>{info.lesson.room}</span>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
           {!subgroup_id && (
             <Alert>
               <AlertDescription className="text-center text-sm">
