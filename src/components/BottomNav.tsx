@@ -12,9 +12,9 @@ export function BottomNav() {
 
   const navItems = [
     { path: '/', icon: Home, label: 'Główna' },
+    { path: '/select-class', icon: Settings, label: 'Zmień klasę' },
     { path: '/today', icon: Calendar, label: t.showDayPlan },
     { path: '/week', icon: CalendarDays, label: t.showWeekPlan },
-    { path: '/settings', icon: Settings, label: t.settings },
   ];
 
   return (

@@ -21,12 +21,12 @@ const Index = () => {
   const t = translations[language];
   const navigate = useNavigate();
 
-  // Show class picker on first load
+  // Redirect to class selector if no class selected
   useEffect(() => {
     if (!class_id) {
-      setShowClassPicker(true);
+      navigate('/select-class');
     }
-  }, [class_id]);
+  }, [class_id, navigate]);
 
   // Load lessons for selected class
   useEffect(() => {
@@ -132,7 +132,7 @@ const Index = () => {
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10 shadow-soft">
         <div className="container max-w-2xl mx-auto px-4 py-4">
           <button
-            onClick={() => setShowClassPicker(true)}
+            onClick={() => navigate('/select-class')}
             className="w-full text-center hover:bg-secondary/50 rounded-lg px-4 py-2 transition-smooth group"
           >
             <div className="flex items-center justify-center gap-2">
@@ -149,7 +149,7 @@ const Index = () => {
               </svg>
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {subgroup_label || t.selectClass}
+              {subgroup_label || 'Dotknij aby zmienić'}
             </p>
           </button>
         </div>
@@ -157,42 +157,23 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container max-w-2xl mx-auto px-4 py-8 pb-28 space-y-6">
-        {!class_id ? (
-          /* No class selected - show prominent call to action */
-          <div className="text-center space-y-6 py-12">
-            <div className="space-y-3">
-              <h2 className="text-3xl font-bold text-foreground">{t.mainButton}</h2>
-              <p className="text-muted-foreground">{t.chooseClass}</p>
-            </div>
-            <Button
-              onClick={() => setShowClassPicker(true)}
-              size="lg"
-              className="w-full max-w-md h-20 text-xl font-bold gradient-hero hover:opacity-90 transition-smooth shadow-large"
-            >
-              {t.selectClass}
-            </Button>
-          </div>
-        ) : (
-          /* Class selected - show main features */
-          <>
-            <div className="text-center space-y-6">
-              <Button
-                onClick={handleMainButton}
-                disabled={loading}
-                size="lg"
-                className="w-full h-24 text-xl font-bold gradient-hero hover:opacity-90 transition-smooth shadow-large"
-              >
-                {t.mainButton}
-              </Button>
-            </div>
+        {/* Big Main Button */}
+        <div className="text-center space-y-6">
+          <Button
+            onClick={handleMainButton}
+            disabled={loading}
+            size="lg"
+            className="w-full h-24 text-xl font-bold gradient-hero hover:opacity-90 transition-smooth shadow-large"
+          >
+            {t.mainButton}
+          </Button>
+        </div>
 
-            {/* Current/Next Lesson Display */}
-            {currentInfo && (
-              <div className="mt-8">
-                {renderCurrentInfo()}
-              </div>
-            )}
-          </>
+        {/* Current/Next Lesson Display */}
+        {currentInfo && (
+          <div className="mt-8">
+            {renderCurrentInfo()}
+          </div>
         )}
       </main>
 
