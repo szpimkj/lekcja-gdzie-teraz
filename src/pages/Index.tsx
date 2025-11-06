@@ -133,11 +133,21 @@ const Index = () => {
         <div className="container max-w-2xl mx-auto px-4 py-4">
           <button
             onClick={() => setShowClassPicker(true)}
-            className="w-full text-center hover:bg-secondary/50 rounded-lg px-4 py-2 transition-smooth"
+            className="w-full text-center hover:bg-secondary/50 rounded-lg px-4 py-2 transition-smooth group"
           >
-            <h1 className="text-lg font-bold text-foreground">
-              {class_label || t.noClass}
-            </h1>
+            <div className="flex items-center justify-center gap-2">
+              <h1 className="text-lg font-bold text-foreground">
+                {class_label || t.noClass}
+              </h1>
+              <svg 
+                className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-smooth" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
             <p className="text-xs text-muted-foreground mt-0.5">
               {subgroup_label || t.selectClass}
             </p>
@@ -147,33 +157,42 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container max-w-2xl mx-auto px-4 py-8 pb-28 space-y-6">
-        {/* Big Main Button */}
-        <div className="text-center space-y-6">
-          <Button
-            onClick={handleMainButton}
-            disabled={loading || !class_id}
-            size="lg"
-            className="w-full h-24 text-xl font-bold gradient-hero hover:opacity-90 transition-smooth shadow-large"
-          >
-            {t.mainButton}
-          </Button>
-
-          {/* Removed quick action buttons - now using bottom nav */}
-        </div>
-
-        {/* Current/Next Lesson Display */}
-        {currentInfo && (
-          <div className="mt-8">
-            {renderCurrentInfo()}
+        {!class_id ? (
+          /* No class selected - show prominent call to action */
+          <div className="text-center space-y-6 py-12">
+            <div className="space-y-3">
+              <h2 className="text-3xl font-bold text-foreground">{t.mainButton}</h2>
+              <p className="text-muted-foreground">{t.chooseClass}</p>
+            </div>
+            <Button
+              onClick={() => setShowClassPicker(true)}
+              size="lg"
+              className="w-full max-w-md h-20 text-xl font-bold gradient-hero hover:opacity-90 transition-smooth shadow-large"
+            >
+              {t.selectClass}
+            </Button>
           </div>
-        )}
+        ) : (
+          /* Class selected - show main features */
+          <>
+            <div className="text-center space-y-6">
+              <Button
+                onClick={handleMainButton}
+                disabled={loading}
+                size="lg"
+                className="w-full h-24 text-xl font-bold gradient-hero hover:opacity-90 transition-smooth shadow-large"
+              >
+                {t.mainButton}
+              </Button>
+            </div>
 
-        {!class_id && (
-          <Alert>
-            <AlertDescription className="text-center">
-              {t.chooseClass}
-            </AlertDescription>
-          </Alert>
+            {/* Current/Next Lesson Display */}
+            {currentInfo && (
+              <div className="mt-8">
+                {renderCurrentInfo()}
+              </div>
+            )}
+          </>
         )}
       </main>
 
