@@ -11,8 +11,8 @@ export function BottomNav() {
   const t = translations[language];
 
   const navItems = [
-    { path: '/select-class', icon: Home, label: 'Główna' },
-    { path: '/', icon: Zap, label: 'Teraz' },
+    { path: '/', icon: Home, label: 'Główna' },
+    { path: '/now', icon: Zap, label: 'Teraz' },
     { path: '/today', icon: Calendar, label: 'Dziś' },
     { path: '/week', icon: CalendarDays, label: 'Tydzień' },
   ];

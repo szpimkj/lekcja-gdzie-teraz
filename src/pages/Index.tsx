@@ -24,7 +24,7 @@ const Index = () => {
   // Redirect to class selector if no class selected
   useEffect(() => {
     if (!class_id) {
-      navigate('/select-class');
+      navigate('/');
     }
   }, [class_id, navigate]);
 
@@ -132,7 +132,7 @@ const Index = () => {
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10 shadow-soft">
         <div className="container max-w-2xl mx-auto px-4 py-4">
           <button
-            onClick={() => navigate('/select-class')}
+            onClick={() => navigate('/')}
             className="w-full text-center hover:bg-secondary/50 rounded-lg px-4 py-2 transition-smooth group"
           >
             <div className="flex items-center justify-center gap-2">

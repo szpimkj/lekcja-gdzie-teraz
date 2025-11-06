@@ -55,7 +55,7 @@ const ClassSelector = () => {
       setSubgroup(null, null);
     }
     
-    navigate('/');
+    navigate('/now');
   };
 
   // If already has a class, show option to change or continue
@@ -170,7 +170,7 @@ const ClassSelector = () => {
 
               {hasClass && (
                 <Button
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate('/now')}
                   variant="ghost"
                   className="w-full"
                 >
