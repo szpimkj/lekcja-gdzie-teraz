@@ -113,20 +113,24 @@ const WeekPlan = () => {
                   </Alert>
                 ) : (
                   getLessonsForDay(day.key).map((group, idx) => (
-                    <div key={idx} className="space-y-2">
-                      {/* Time header for this period */}
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
+                    <div key={idx} className="flex gap-4 items-start">
+                      {/* Time and period on the left */}
+                      <div className="flex flex-col gap-1 min-w-[120px] pt-4">
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
                           <Clock className="h-4 w-4" />
-                          <span className="font-medium">{group.start_time} - {group.end_time}</span>
+                          <span className="font-medium">{group.start_time}</span>
                         </div>
-                        <span className="text-primary font-medium">
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <Clock className="h-4 w-4 opacity-0" />
+                          <span className="font-medium">{group.end_time}</span>
+                        </div>
+                        <span className="text-primary font-medium text-sm mt-1">
                           {t.period} {group.period}
                         </span>
                       </div>
                       
-                      {/* Lessons as tiles */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {/* Lessons as tiles on the right */}
+                      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         {group.lessons.map((lesson, lessonIdx) => (
                           <Card key={lessonIdx} className="p-4 transition-smooth hover:shadow-medium">
                             <h3 className="font-bold text-base text-foreground mb-2">
