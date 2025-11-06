@@ -1,0 +1,47 @@
+[
+  {
+    "class_id": "2c",
+    "class_label": "2 c",
+    "weekday": "MON",
+    "period": 4,
+    "start_time": "10:50",
+    "end_time": "11:35",
+    "subject": "Język angielski",
+    "room": "2 A",
+    "teacher": "HN",
+    "subgroup_id": "",
+    "subgroup_label": "",
+    "priority": 0,
+    "notes": ""
+  },
+  {
+    "class_id": "2c",
+    "class_label": "2 c",
+    "weekday": "WED",
+    "period": 3,
+    "start_time": "09:55",
+    "end_time": "10:40",
+    "subject": "Wychowanie fizyczne",
+    "room": "sala.sport.",
+    "teacher": "MK",
+    "subgroup_id": "",
+    "subgroup_label": "",
+    "priority": 0,
+    "notes": ""
+  },
+  {
+    "class_id": "2c",
+    "class_label": "2 c",
+    "weekday": "FRI",
+    "period": 1,
+    "start_time": "08:05",
+    "end_time": "08:50",
+    "subject": "eduk.inf.",
+    "room": "10 D",
+    "teacher": "BM",
+    "subgroup_id": "",
+    "subgroup_label": "",
+    "priority": 0,
+    "notes": ""
+  }
+]

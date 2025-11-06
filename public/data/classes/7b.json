@@ -1,0 +1,47 @@
+[
+  {
+    "class_id": "7b",
+    "class_label": "VII b",
+    "weekday": "MON",
+    "period": 2,
+    "start_time": "09:00",
+    "end_time": "09:45",
+    "subject": "geografia",
+    "room": "3 D",
+    "teacher": "JA",
+    "subgroup_id": "",
+    "subgroup_label": "",
+    "priority": 0,
+    "notes": ""
+  },
+  {
+    "class_id": "7b",
+    "class_label": "VII b",
+    "weekday": "WED",
+    "period": 4,
+    "start_time": "10:50",
+    "end_time": "11:35",
+    "subject": "Język niemiecki",
+    "room": "5 B",
+    "teacher": "KS",
+    "subgroup_id": "",
+    "subgroup_label": "",
+    "priority": 0,
+    "notes": ""
+  },
+  {
+    "class_id": "7b",
+    "class_label": "VII b",
+    "weekday": "THU",
+    "period": 1,
+    "start_time": "08:05",
+    "end_time": "08:50",
+    "subject": "j.polski",
+    "room": "9 a D",
+    "teacher": "KW",
+    "subgroup_id": "",
+    "subgroup_label": "",
+    "priority": 0,
+    "notes": ""
+  }
+]

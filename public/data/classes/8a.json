@@ -1,0 +1,62 @@
+[
+  {
+    "class_id": "8a",
+    "class_label": "VIII a",
+    "weekday": "MON",
+    "period": 2,
+    "start_time": "09:00",
+    "end_time": "09:45",
+    "subject": "historia",
+    "room": "3 B",
+    "teacher": "MŻ",
+    "subgroup_id": "",
+    "subgroup_label": "",
+    "priority": 0,
+    "notes": ""
+  },
+  {
+    "class_id": "8a",
+    "class_label": "VIII a",
+    "weekday": "MON",
+    "period": 5,
+    "start_time": "12:05",
+    "end_time": "12:50",
+    "subject": "j.polski",
+    "room": "9 b D",
+    "teacher": "JT",
+    "subgroup_id": "",
+    "subgroup_label": "",
+    "priority": 0,
+    "notes": ""
+  },
+  {
+    "class_id": "8a",
+    "class_label": "VIII a",
+    "weekday": "THU",
+    "period": 3,
+    "start_time": "09:55",
+    "end_time": "10:40",
+    "subject": "matematyka",
+    "room": "7 B",
+    "teacher": "MD",
+    "subgroup_id": "",
+    "subgroup_label": "",
+    "priority": 0,
+    "notes": ""
+  },
+  {
+    "class_id": "8a",
+    "class_label": "VIII a",
+    "weekday": "FRI",
+    "period": 2,
+    "start_time": "09:00",
+    "end_time": "09:45",
+    "subject": "fizyka",
+    "room": "6 B",
+    "teacher": "LB",
+    "subgroup_id": "",
+    "subgroup_label": "",
+    "priority": 0,
+    "notes": ""
+  }
+]

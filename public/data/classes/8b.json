@@ -1,0 +1,62 @@
+[
+  {
+    "class_id": "8b",
+    "class_label": "VIII b",
+    "weekday": "MON",
+    "period": 1,
+    "start_time": "08:05",
+    "end_time": "08:50",
+    "subject": "religia",
+    "room": "6 B",
+    "teacher": "MB",
+    "subgroup_id": "",
+    "subgroup_label": "",
+    "priority": 0,
+    "notes": ""
+  },
+  {
+    "class_id": "8b",
+    "class_label": "VIII b",
+    "weekday": "TUE",
+    "period": 2,
+    "start_time": "09:00",
+    "end_time": "09:45",
+    "subject": "matematyka",
+    "room": "5 B",
+    "teacher": "S-FB",
+    "subgroup_id": "",
+    "subgroup_label": "",
+    "priority": 0,
+    "notes": ""
+  },
+  {
+    "class_id": "8b",
+    "class_label": "VIII b",
+    "weekday": "WED",
+    "period": 3,
+    "start_time": "09:55",
+    "end_time": "10:40",
+    "subject": "chemia",
+    "room": "6 B",
+    "teacher": "LB",
+    "subgroup_id": "",
+    "subgroup_label": "",
+    "priority": 0,
+    "notes": ""
+  },
+  {
+    "class_id": "8b",
+    "class_label": "VIII b",
+    "weekday": "FRI",
+    "period": 1,
+    "start_time": "08:05",
+    "end_time": "08:50",
+    "subject": "fizyka",
+    "room": "6 B",
+    "teacher": "LB",
+    "subgroup_id": "",
+    "subgroup_label": "",
+    "priority": 0,
+    "notes": ""
+  }
+]
