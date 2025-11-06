@@ -70,7 +70,7 @@ export function ClassPicker({ open, onOpenChange }: ClassPickerProps) {
           <div className="space-y-2">
             <Label htmlFor="class">{t.selectClass}</Label>
             <Select
-              value={selectedClass?.class_id || ''}
+              value={selectedClass?.class_id}
               onValueChange={(value) => {
                 const cls = classes.find(c => c.class_id === value);
                 setSelectedClass(cls || null);
@@ -94,14 +94,14 @@ export function ClassPicker({ open, onOpenChange }: ClassPickerProps) {
             <div className="space-y-2">
               <Label htmlFor="subgroup">{t.selectSubgroup}</Label>
               <Select
-                value={selectedSubgroup}
-                onValueChange={setSelectedSubgroup}
+                value={selectedSubgroup || 'none'}
+                onValueChange={(val) => setSelectedSubgroup(val === 'none' ? '' : val)}
               >
                 <SelectTrigger id="subgroup">
                   <SelectValue placeholder={t.selectSubgroup} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">{t.selectSubgroup}</SelectItem>
+                  <SelectItem value="none">{t.selectSubgroup}</SelectItem>
                   {selectedClass.subgroups.map((sub) => (
                     <SelectItem key={sub.subgroup_id} value={sub.subgroup_id}>
                       {sub.subgroup_label}
