@@ -11,7 +11,6 @@ import { getCurrentOrNextLesson } from '@/lib/scheduleLogic';
 import { Lesson, CurrentLessonInfo } from '@/types/schedule';
 import { Settings, Clock, MapPin } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import breakImage from '@/assets/break-time.jpg';
 
 const Index = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
@@ -91,12 +90,7 @@ const Index = () => {
       return (
         <div className="space-y-4">
           {isBreakTime && (
-            <div className="text-center space-y-4 mb-6">
-              <img 
-                src={breakImage} 
-                alt="Przerwa" 
-                className="w-64 mx-auto rounded-lg shadow-medium"
-              />
+            <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-primary">
                 Uff! Masz teraz przerwę. Następne zajęcia to:
               </h2>
@@ -164,12 +158,7 @@ const Index = () => {
     return (
       <div className="space-y-4">
         {isBreakTime && (
-          <div className="text-center space-y-4 mb-6">
-            <img 
-              src={breakImage} 
-              alt="Przerwa" 
-              className="w-64 mx-auto rounded-lg shadow-medium"
-            />
+          <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-primary">
               Uff! Masz teraz przerwę. Następne zajęcia to:
             </h2>
