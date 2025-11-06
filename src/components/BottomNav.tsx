@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Calendar, CalendarDays, Settings } from 'lucide-react';
+import { Home, Calendar, CalendarDays, Zap } from 'lucide-react';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
@@ -11,10 +11,10 @@ export function BottomNav() {
   const t = translations[language];
 
   const navItems = [
-    { path: '/', icon: Home, label: 'Główna' },
-    { path: '/select-class', icon: Settings, label: 'Zmień klasę' },
-    { path: '/today', icon: Calendar, label: t.showDayPlan },
-    { path: '/week', icon: CalendarDays, label: t.showWeekPlan },
+    { path: '/select-class', icon: Home, label: 'Główna' },
+    { path: '/', icon: Zap, label: 'Teraz' },
+    { path: '/today', icon: Calendar, label: 'Dziś' },
+    { path: '/week', icon: CalendarDays, label: 'Tydzień' },
   ];
 
   return (
