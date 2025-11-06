@@ -11,6 +11,7 @@ import { getCurrentOrNextLesson } from '@/lib/scheduleLogic';
 import { Lesson, CurrentLessonInfo } from '@/types/schedule';
 import { Settings, Clock, MapPin } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import breakImage from '@/assets/break-time.jpg';
 
 const Index = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
@@ -85,8 +86,23 @@ const Index = () => {
     if (Array.isArray(currentInfo)) {
       // Multiple subgroups - show as tiles next to each other
       const firstInfo = currentInfo[0];
+      const isBreakTime = firstInfo.status === 'next';
+      
       return (
         <div className="space-y-4">
+          {isBreakTime && (
+            <div className="text-center space-y-4 mb-6">
+              <img 
+                src={breakImage} 
+                alt="Przerwa" 
+                className="w-full max-w-md mx-auto rounded-lg shadow-medium"
+              />
+              <h2 className="text-2xl font-bold text-primary">
+                Uff! Masz teraz przerwę. Następne zajęcia to:
+              </h2>
+            </div>
+          )}
+          
           <div className="flex gap-4 items-start">
             {/* Time and period on the left */}
             <div className="flex flex-col gap-1 min-w-[120px] pt-4">
@@ -143,18 +159,35 @@ const Index = () => {
     }
 
     // Single lesson
+    const isBreakTime = currentInfo.status === 'next';
+    
     return (
-      <LessonCard
-        lesson={currentInfo.lesson}
-        status={currentInfo.status === 'current' ? 'current' : currentInfo.status === 'next' ? 'next' : undefined}
-        minutesInfo={
-          currentInfo.minutesRemaining 
-            ? `${t.remaining} ${currentInfo.minutesRemaining} ${t.minutesShort}`
-            : currentInfo.minutesUntil 
-              ? `${t.in} ${currentInfo.minutesUntil} ${t.minutesShort}`
-              : undefined
-        }
-      />
+      <div className="space-y-4">
+        {isBreakTime && (
+          <div className="text-center space-y-4 mb-6">
+            <img 
+              src={breakImage} 
+              alt="Przerwa" 
+              className="w-full max-w-md mx-auto rounded-lg shadow-medium"
+            />
+            <h2 className="text-2xl font-bold text-primary">
+              Uff! Masz teraz przerwę. Następne zajęcia to:
+            </h2>
+          </div>
+        )}
+        
+        <LessonCard
+          lesson={currentInfo.lesson}
+          status={currentInfo.status === 'current' ? 'current' : currentInfo.status === 'next' ? 'next' : undefined}
+          minutesInfo={
+            currentInfo.minutesRemaining 
+              ? `${t.remaining} ${currentInfo.minutesRemaining} ${t.minutesShort}`
+              : currentInfo.minutesUntil 
+                ? `${t.in} ${currentInfo.minutesUntil} ${t.minutesShort}`
+                : undefined
+          }
+        />
+      </div>
     );
   };
 
