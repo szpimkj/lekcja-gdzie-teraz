@@ -106,13 +106,13 @@ const ClassSelector = () => {
                           key={classInfo.class_id}
                           onClick={() => handleClassClick(classInfo)}
                           className={cn(
-                            'group relative h-20 rounded-lg border-2 transition-all duration-200',
+                            'group relative h-32 w-32 rounded-xl border-2 transition-all duration-200',
                             'bg-card hover:bg-primary/5 border-border hover:border-primary',
                             'hover:shadow-md hover:scale-105 active:scale-95',
                             'flex items-center justify-center'
                           )}
                         >
-                          <span className="text-3xl font-bold text-foreground group-hover:text-primary transition-colors">
+                          <span className="text-5xl font-bold text-foreground group-hover:text-primary transition-colors">
                             {classLetter}
                           </span>
                         </button>
