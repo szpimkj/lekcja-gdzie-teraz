@@ -4,25 +4,15 @@ import { DateTime } from 'luxon';
 import { ClassInfo } from '@/types/schedule';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { GraduationCap, ArrowRight, Clock } from 'lucide-react';
+import { GraduationCap, Clock } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const ClassSelector = () => {
   const [classes, setClasses] = useState<ClassInfo[]>([]);
-  const [selectedClass, setSelectedClass] = useState<ClassInfo | null>(null);
-  const [selectedSubgroup, setSelectedSubgroup] = useState<string>('');
   const [currentTime, setCurrentTime] = useState(DateTime.now().setZone('Europe/Warsaw'));
   
-  const { setClass, setSubgroup, language, class_id } = useSettingsStore();
+  const { setClass, setSubgroup, language } = useSettingsStore();
   const t = translations[language];
   const navigate = useNavigate();
 
@@ -41,25 +31,25 @@ const ClassSelector = () => {
       .catch(console.error);
   }, []);
 
-  const handleContinue = () => {
-    if (!selectedClass) return;
-    
-    setClass(selectedClass.class_id, selectedClass.class_label);
-    
-    if (selectedSubgroup && selectedSubgroup !== 'none') {
-      const subgroup = selectedClass.subgroups?.find(s => s.subgroup_id === selectedSubgroup);
-      if (subgroup) {
-        setSubgroup(subgroup.subgroup_id, subgroup.subgroup_label);
-      }
-    } else {
-      setSubgroup(null, null);
-    }
-    
+  const handleClassClick = (classInfo: ClassInfo) => {
+    setClass(classInfo.class_id, classInfo.class_label);
+    setSubgroup(null, null);
     navigate('/now');
   };
 
-  // If already has a class, show option to change or continue
-  const hasClass = class_id !== null;
+  // Group classes by grade level (extract number from class_label)
+  const groupedClasses = classes.reduce((acc, cls) => {
+    const grade = cls.class_label.match(/\d+/)?.[0] || 'Inne';
+    if (!acc[grade]) acc[grade] = [];
+    acc[grade].push(cls);
+    return acc;
+  }, {} as Record<string, ClassInfo[]>);
+
+  const sortedGrades = Object.keys(groupedClasses).sort((a, b) => {
+    if (a === 'Inne') return 1;
+    if (b === 'Inne') return -1;
+    return parseInt(a) - parseInt(b);
+  });
 
   // Format current date and time
   const weekdayNames = {
@@ -99,84 +89,38 @@ const ClassSelector = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 container max-w-2xl mx-auto px-4 py-8 flex flex-col justify-center">
+      <main className="flex-1 container max-w-4xl mx-auto px-4 py-8">
         <Card className="shadow-large">
-          <CardContent className="pt-6 space-y-6">
-            {/* Class Selection */}
-            <div className="space-y-2">
-              <Label htmlFor="class" className="text-base font-semibold">
-                {t.selectClass}
-              </Label>
-              <Select
-                value={selectedClass?.class_id}
-                onValueChange={(value) => {
-                  const cls = classes.find(c => c.class_id === value);
-                  setSelectedClass(cls || null);
-                  setSelectedSubgroup('');
-                }}
-              >
-                <SelectTrigger id="class" className="h-12 text-base">
-                  <SelectValue placeholder={t.selectClass} />
-                </SelectTrigger>
-                <SelectContent>
-                  {classes.map((cls) => (
-                    <SelectItem key={cls.class_id} value={cls.class_id}>
-                      {cls.class_label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Subgroup Selection */}
-            {selectedClass && selectedClass.subgroups && selectedClass.subgroups.length > 0 && (
-              <div className="space-y-2">
-                <Label htmlFor="subgroup" className="text-base font-semibold">
-                  {t.selectSubgroup}
-                </Label>
-                <Select
-                  value={selectedSubgroup || 'none'}
-                  onValueChange={(val) => setSelectedSubgroup(val === 'none' ? '' : val)}
-                >
-                  <SelectTrigger id="subgroup" className="h-12 text-base">
-                    <SelectValue placeholder={t.selectSubgroup} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">{t.selectSubgroup}</SelectItem>
-                    {selectedClass.subgroups.map((sub) => (
-                      <SelectItem key={sub.subgroup_id} value={sub.subgroup_id}>
-                        {sub.subgroup_label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-sm text-muted-foreground">
-                  Opcjonalne - pozostaw puste aby widzieć wszystkie grupy
-                </p>
-              </div>
-            )}
-
-            {/* Action Buttons */}
-            <div className="pt-4 space-y-3">
-              <Button 
-                onClick={handleContinue}
-                disabled={!selectedClass}
-                size="lg"
-                className="w-full h-14 text-lg font-bold gradient-hero gap-2"
-              >
-                {hasClass ? 'Zapisz zmiany' : 'Kontynuuj'}
-                <ArrowRight className="h-5 w-5" />
-              </Button>
-
-              {hasClass && (
-                <Button
-                  onClick={() => navigate('/now')}
-                  variant="ghost"
-                  className="w-full"
-                >
-                  Anuluj
-                </Button>
-              )}
+          <CardContent className="pt-6 pb-8">
+            <div className="space-y-8">
+              {sortedGrades.map((grade) => (
+                <div key={grade} className="space-y-4">
+                  <h2 className="text-xl font-bold text-foreground">
+                    Klasa {grade}
+                  </h2>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    {groupedClasses[grade].map((classInfo) => {
+                      const classLetter = classInfo.class_label.replace(/\d+/g, '').trim();
+                      return (
+                        <button
+                          key={classInfo.class_id}
+                          onClick={() => handleClassClick(classInfo)}
+                          className={cn(
+                            'group relative h-20 rounded-lg border-2 transition-all duration-200',
+                            'bg-card hover:bg-primary/5 border-border hover:border-primary',
+                            'hover:shadow-md hover:scale-105 active:scale-95',
+                            'flex items-center justify-center'
+                          )}
+                        >
+                          <span className="text-3xl font-bold text-foreground group-hover:text-primary transition-colors">
+                            {classLetter}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
