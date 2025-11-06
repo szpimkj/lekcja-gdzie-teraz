@@ -94,11 +94,11 @@ const ClassSelector = () => {
           <CardContent className="pt-6 pb-8">
             <div className="space-y-8">
               {sortedGrades.map((grade) => (
-                <div key={grade} className="space-y-4">
-                  <h2 className="text-xl font-bold text-foreground">
+                <div key={grade} className="flex items-center gap-4 flex-wrap">
+                  <h2 className="text-xl font-bold text-foreground whitespace-nowrap min-w-[100px]">
                     Klasa {grade}
                   </h2>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  <div className="flex gap-3 flex-wrap">
                     {groupedClasses[grade].map((classInfo) => {
                       const classLetter = classInfo.class_label.replace(/\d+/g, '').trim();
                       return (
