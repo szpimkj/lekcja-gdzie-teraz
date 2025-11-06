@@ -92,7 +92,11 @@ const Index = () => {
           {isBreakTime && (
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-primary">
-                Uff! Masz teraz przerwę. Następne zajęcia to:
+                Uff! Masz teraz przerwę, następne zajęcia zaczynają się za{' '}
+                {firstInfo.minutesUntil && firstInfo.minutesUntil >= 60 
+                  ? `${Math.floor(firstInfo.minutesUntil / 60)}h ${firstInfo.minutesUntil % 60}min`
+                  : `${firstInfo.minutesUntil} min`
+                }
               </h2>
             </div>
           )}
@@ -160,7 +164,11 @@ const Index = () => {
         {isBreakTime && (
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-primary">
-              Uff! Masz teraz przerwę. Następne zajęcia to:
+              Uff! Masz teraz przerwę, następne zajęcia zaczynają się za{' '}
+              {currentInfo.minutesUntil && currentInfo.minutesUntil >= 60 
+                ? `${Math.floor(currentInfo.minutesUntil / 60)}h ${currentInfo.minutesUntil % 60}min`
+                : `${currentInfo.minutesUntil} min`
+              }
             </h2>
           </div>
         )}
