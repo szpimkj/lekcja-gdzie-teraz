@@ -62,6 +62,15 @@ const Index = () => {
     return () => clearInterval(interval);
   }, [lessons, class_id, subgroup_id, language]);
 
+  // Auto-redirect back to main page after 10 seconds
+  useEffect(() => {
+    const redirectTimer = setTimeout(() => {
+      navigate('/');
+    }, 10000);
+
+    return () => clearTimeout(redirectTimer);
+  }, [navigate]);
+
   const handleMainButton = () => {
     if (!class_id) {
       setShowClassPicker(true);
