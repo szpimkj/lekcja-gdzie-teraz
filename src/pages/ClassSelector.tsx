@@ -50,16 +50,14 @@ const ClassSelector = () => {
           setIsFullScreen(false);
           setPendingExitFullScreen(false);
         } else {
-          // Unauthorized exit attempt - re-enter immediately
-          requestAnimationFrame(() => {
-            document.documentElement.requestFullscreen().catch((err) => {
-              console.error('Failed to re-enter fullscreen:', err);
-            });
-          });
-          // Show PIN dialog if not already showing
+          // Unauthorized exit attempt - show PIN dialog and re-enter
           if (!showPinDialog) {
             setShowPinDialog(true);
           }
+          // Re-enter fullscreen immediately without animation frame delay
+          document.documentElement.requestFullscreen().catch((err) => {
+            console.error('Failed to re-enter fullscreen:', err);
+          });
         }
       }
     };
@@ -94,18 +92,14 @@ const ClassSelector = () => {
     
     // Ensure we're still in fullscreen
     if (!document.fullscreenElement) {
-      requestAnimationFrame(() => {
-        document.documentElement.requestFullscreen().catch(console.error);
-      });
+      document.documentElement.requestFullscreen().catch(console.error);
     }
   };
 
   const handleWrongPin = () => {
     // Ensure we're still in fullscreen after wrong PIN
     if (!document.fullscreenElement) {
-      requestAnimationFrame(() => {
-        document.documentElement.requestFullscreen().catch(console.error);
-      });
+      document.documentElement.requestFullscreen().catch(console.error);
     }
   };
 
