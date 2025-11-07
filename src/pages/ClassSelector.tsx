@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
 import { ClassInfo } from '@/types/schedule';
@@ -8,6 +8,29 @@ import { Card, CardContent } from '@/components/ui/card';
 import { GraduationCap, Clock, LayoutGrid, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
+
+// Move static arrays outside component to prevent recreating on every render
+const HOVER_COLORS = [
+  'hover:bg-primary hover:border-primary hover:text-primary-foreground hover:shadow-colorful',
+  'hover:bg-accent hover:border-accent hover:text-accent-foreground hover:shadow-colorful',
+  'hover:bg-info hover:border-info hover:text-info-foreground hover:shadow-colorful',
+  'hover:bg-success hover:border-success hover:text-success-foreground hover:shadow-colorful',
+  'hover:bg-secondary hover:border-secondary hover:text-secondary-foreground hover:shadow-colorful'
+];
+
+const BG_GRADIENTS = [
+  'bg-gradient-to-br from-primary/10 to-accent/10',
+  'bg-gradient-to-br from-info/10 to-success/10',
+  'bg-gradient-to-br from-accent/10 to-secondary/10',
+  'bg-gradient-to-br from-success/10 to-primary/10',
+];
+
+const BTN_COLORS = [
+  'border-primary bg-primary hover:bg-primary-foreground hover:text-primary hover:border-primary',
+  'border-accent bg-accent hover:bg-accent-foreground hover:text-accent hover:border-accent',
+  'border-info bg-info hover:bg-info-foreground hover:text-info hover:border-info',
+  'border-success bg-success hover:bg-success-foreground hover:text-success hover:border-success',
+];
 
 const ClassSelector = () => {
   const [classes, setClasses] = useState<ClassInfo[]>([]);
@@ -49,38 +72,42 @@ const ClassSelector = () => {
     navigate('/now');
   };
 
-  // Group classes by grade level (extract number from class_label, handle Roman numerals)
-  const romanToArabic = (roman: string): number => {
-    const romanMap: { [key: string]: number } = {
-      'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5, 
-      'VI': 6, 'VII': 7, 'VIII': 8, 'IX': 9, 'X': 10
+  // Group classes by grade level - memoized to prevent recalculation on every render
+  const { groupedClasses, sortedGrades } = useMemo(() => {
+    const romanToArabic = (roman: string): number => {
+      const romanMap: { [key: string]: number } = {
+        'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5, 
+        'VI': 6, 'VII': 7, 'VIII': 8, 'IX': 9, 'X': 10
+      };
+      return romanMap[roman] || 0;
     };
-    return romanMap[roman] || 0;
-  };
 
-  const groupedClasses = classes.reduce((acc, cls) => {
-    // Try to match Roman numerals first
-    const romanMatch = cls.class_label.match(/\b([IVX]+)\b/);
-    let grade: string;
-    
-    if (romanMatch) {
-      const arabicNum = romanToArabic(romanMatch[1]);
-      grade = arabicNum > 0 ? arabicNum.toString() : 'Inne';
-    } else {
-      // Fall back to Arabic numerals
-      grade = cls.class_label.match(/\d+/)?.[0] || 'Inne';
-    }
-    
-    if (!acc[grade]) acc[grade] = [];
-    acc[grade].push(cls);
-    return acc;
-  }, {} as Record<string, ClassInfo[]>);
+    const grouped = classes.reduce((acc, cls) => {
+      // Try to match Roman numerals first
+      const romanMatch = cls.class_label.match(/\b([IVX]+)\b/);
+      let grade: string;
+      
+      if (romanMatch) {
+        const arabicNum = romanToArabic(romanMatch[1]);
+        grade = arabicNum > 0 ? arabicNum.toString() : 'Inne';
+      } else {
+        // Fall back to Arabic numerals
+        grade = cls.class_label.match(/\d+/)?.[0] || 'Inne';
+      }
+      
+      if (!acc[grade]) acc[grade] = [];
+      acc[grade].push(cls);
+      return acc;
+    }, {} as Record<string, ClassInfo[]>);
 
-  const sortedGrades = Object.keys(groupedClasses).sort((a, b) => {
-    if (a === 'Inne') return 1;
-    if (b === 'Inne') return -1;
-    return parseInt(a) - parseInt(b);
-  });
+    const sorted = Object.keys(grouped).sort((a, b) => {
+      if (a === 'Inne') return 1;
+      if (b === 'Inne') return -1;
+      return parseInt(a) - parseInt(b);
+    });
+
+    return { groupedClasses: grouped, sortedGrades: sorted };
+  }, [classes]);
 
   // Format current date and time
   const weekdayNames = {
@@ -140,17 +167,10 @@ const ClassSelector = () => {
                     <h2 className="text-lg sm:text-xl font-bold text-primary whitespace-nowrap sm:min-w-[100px]">
                       🎓 Klasa {grade}
                     </h2>
-                    <div className="flex gap-2 sm:gap-3 flex-wrap">
+                     <div className="flex gap-2 sm:gap-3 flex-wrap">
                       {groupedClasses[grade].map((classInfo) => {
                         const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim();
-                        const colors = [
-                          'hover:bg-primary hover:border-primary hover:text-primary-foreground hover:shadow-colorful',
-                          'hover:bg-accent hover:border-accent hover:text-accent-foreground hover:shadow-colorful',
-                          'hover:bg-info hover:border-info hover:text-info-foreground hover:shadow-colorful',
-                          'hover:bg-success hover:border-success hover:text-success-foreground hover:shadow-colorful',
-                          'hover:bg-secondary hover:border-secondary hover:text-secondary-foreground hover:shadow-colorful'
-                        ];
-                        const colorClass = colors[classInfo.class_id.charCodeAt(classInfo.class_id.length - 1) % colors.length];
+                        const colorClass = HOVER_COLORS[classInfo.class_id.charCodeAt(classInfo.class_id.length - 1) % HOVER_COLORS.length];
                         
                         return (
                           <button
@@ -179,13 +199,7 @@ const ClassSelector = () => {
         ) : (
           <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {sortedGrades.map((grade, idx) => {
-              const bgColors = [
-                'bg-gradient-to-br from-primary/10 to-accent/10',
-                'bg-gradient-to-br from-info/10 to-success/10',
-                'bg-gradient-to-br from-accent/10 to-secondary/10',
-                'bg-gradient-to-br from-success/10 to-primary/10',
-              ];
-              const bgClass = bgColors[idx % bgColors.length];
+              const bgClass = BG_GRADIENTS[idx % BG_GRADIENTS.length];
               
               return (
                 <Card 
@@ -201,13 +215,7 @@ const ClassSelector = () => {
                   <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
                     {groupedClasses[grade].map((classInfo, btnIdx) => {
                       const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim();
-                      const btnColors = [
-                        'border-primary bg-primary hover:bg-primary-foreground hover:text-primary hover:border-primary',
-                        'border-accent bg-accent hover:bg-accent-foreground hover:text-accent hover:border-accent',
-                        'border-info bg-info hover:bg-info-foreground hover:text-info hover:border-info',
-                        'border-success bg-success hover:bg-success-foreground hover:text-success hover:border-success',
-                      ];
-                      const btnColor = btnColors[btnIdx % btnColors.length];
+                      const btnColor = BTN_COLORS[btnIdx % BTN_COLORS.length];
                       
                       return (
                         <button
