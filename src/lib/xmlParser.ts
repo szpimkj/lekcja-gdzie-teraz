@@ -159,8 +159,11 @@ export async function parseScheduleXML(): Promise<{
       const name = el.getAttribute('name')!;
       const short = el.getAttribute('short')!;
       
-      // Filter out świetlica (afterschool) classes
-      if (name.toLowerCase().includes('św') || short.toLowerCase().includes('św')) {
+      // Filter out świetlica (afterschool) classes and MB
+      const nameLower = name.toLowerCase();
+      const shortLower = short.toLowerCase();
+      if (nameLower.includes('św') || shortLower.includes('św') || 
+          nameLower === 'mb' || shortLower === 'mb') {
         return;
       }
       
