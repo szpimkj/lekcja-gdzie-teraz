@@ -9,7 +9,7 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { getCurrentOrNextLesson } from '@/lib/scheduleLogic';
 import { Lesson, CurrentLessonInfo } from '@/types/schedule';
-import { Settings, Clock, MapPin } from 'lucide-react';
+import { Settings, Clock, MapPin, Calendar } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Index = () => {
@@ -17,6 +17,7 @@ const Index = () => {
   const [currentInfo, setCurrentInfo] = useState<CurrentLessonInfo | CurrentLessonInfo[] | null>(null);
   const [showClassPicker, setShowClassPicker] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
   
   const { class_id, class_label, subgroup_id, subgroup_label, language } = useSettingsStore();
   const t = translations[language];
@@ -46,6 +47,15 @@ const Index = () => {
         });
     });
   }, [class_id]);
+
+  // Update current time every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Update current lesson every minute
   useEffect(() => {
@@ -204,22 +214,54 @@ const Index = () => {
     );
   };
 
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('pl-PL', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('pl-PL', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10 shadow-soft">
         <div className="container max-w-2xl mx-auto px-4 py-4">
-          <button
-            onClick={() => navigate('/')}
-            className="w-full text-center bg-secondary/60 hover:bg-secondary/80 rounded-lg px-4 py-2 transition-smooth border border-border"
-          >
-            <h1 className="text-lg font-bold text-foreground">
-              {class_label || t.noClass}
-            </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Zmień klasę
-            </p>
-          </button>
+          <div className="flex items-center justify-between gap-4">
+            {/* Date and Time on the left */}
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Calendar className="h-4 w-4" />
+                <span className="font-medium">{formatDate(currentTime)}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Clock className="h-4 w-4" />
+                <span className="font-medium">{formatTime(currentTime)}</span>
+              </div>
+            </div>
+            
+            {/* Class selector button on the right */}
+            <button
+              onClick={() => navigate('/')}
+              className="text-center bg-secondary/60 hover:bg-secondary/80 rounded-lg px-4 py-2 transition-smooth border border-border"
+            >
+              <h1 className="text-base font-bold text-foreground">
+                {class_label || t.noClass}
+              </h1>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Zmień klasę
+              </p>
+            </button>
+          </div>
         </div>
       </header>
 
