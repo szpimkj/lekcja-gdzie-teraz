@@ -160,17 +160,17 @@ const ClassSelector = () => {
   return (
     <div className="min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background">
       {/* Compact Banner Header */}
-      <header className="bg-card/80 backdrop-blur-sm border-b border-border/50 shadow-soft">
+      <header className="bg-primary border-2 border-primary shadow-soft">
         <div className="px-4 md:px-6 py-3 flex items-center justify-between">
           {/* Time/Date - compact on the left */}
-          <div className="hidden md:flex flex-col items-start text-xs text-muted-foreground">
-            <div className="font-semibold text-foreground">{formattedTime}</div>
+          <div className="hidden md:flex flex-col items-start text-xs text-primary-foreground/80">
+            <div className="font-semibold text-primary-foreground">{formattedTime}</div>
             <div>{weekdayName}, {formattedDate}</div>
           </div>
           
           {/* Main Title - centered and prominent */}
           <div className="flex-1 text-center">
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+            <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground">
               Wybierz swoją klasę
             </h1>
           </div>
@@ -203,7 +203,7 @@ const ClassSelector = () => {
         </div>
         
         {/* Mobile time/date - below title */}
-        <div className="md:hidden px-4 pb-2 text-center text-xs text-muted-foreground">
+        <div className="md:hidden px-4 pb-2 text-center text-xs text-primary-foreground/80">
           <span className="font-semibold">{formattedTime}</span>
           <span className="mx-2">•</span>
           <span>{weekdayName}, {formattedDate}</span>
