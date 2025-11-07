@@ -111,10 +111,10 @@ const ClassSelector = () => {
           {/* Title */}
           <div className="text-center">
             <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2">
-              <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Gdzie mam lekcję?</h1>
+              <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-accent animate-pulse" />
+              <h1 className="text-xl sm:text-2xl font-bold text-primary">Gdzie mam lekcję? 📚</h1>
             </div>
-            <p className="text-sm sm:text-base text-muted-foreground">{t.chooseClass}</p>
+            <p className="text-sm sm:text-base text-muted-foreground font-medium">✨ {t.chooseClass}</p>
           </div>
           
           {/* View Toggle */}
@@ -137,24 +137,34 @@ const ClassSelector = () => {
               <div className="space-y-6">
                 {sortedGrades.map((grade) => (
                   <div key={grade} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                    <h2 className="text-lg sm:text-xl font-bold text-foreground whitespace-nowrap sm:min-w-[100px]">
-                      Klasa {grade}
+                    <h2 className="text-lg sm:text-xl font-bold text-primary whitespace-nowrap sm:min-w-[100px]">
+                      🎓 Klasa {grade}
                     </h2>
                     <div className="flex gap-2 sm:gap-3 flex-wrap">
                       {groupedClasses[grade].map((classInfo) => {
                         const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim();
+                        const colors = [
+                          'hover:bg-primary hover:border-primary hover:text-primary-foreground hover:shadow-colorful',
+                          'hover:bg-accent hover:border-accent hover:text-accent-foreground hover:shadow-colorful',
+                          'hover:bg-info hover:border-info hover:text-info-foreground hover:shadow-colorful',
+                          'hover:bg-success hover:border-success hover:text-success-foreground hover:shadow-colorful',
+                          'hover:bg-secondary hover:border-secondary hover:text-secondary-foreground hover:shadow-colorful'
+                        ];
+                        const colorClass = colors[classInfo.class_id.charCodeAt(classInfo.class_id.length - 1) % colors.length];
+                        
                         return (
                           <button
                             key={classInfo.class_id}
                             onClick={() => handleClassClick(classInfo)}
                             className={cn(
-                              'group relative h-24 w-24 sm:h-32 sm:w-32 rounded-xl border-2 transition-all duration-200',
-                              'bg-card hover:bg-primary/5 border-border hover:border-primary',
-                              'hover:shadow-md hover:scale-105 active:scale-95',
-                              'flex items-center justify-center touch-manipulation'
+                              'group relative h-24 w-24 sm:h-32 sm:w-32 rounded-2xl border-3 transition-bounce',
+                              'bg-card border-border shadow-soft',
+                              'hover:scale-110 active:scale-95 hover:-rotate-3',
+                              'flex items-center justify-center touch-manipulation',
+                              colorClass
                             )}
                           >
-                            <span className="text-4xl sm:text-5xl font-bold text-foreground group-hover:text-primary transition-colors">
+                            <span className="text-4xl sm:text-5xl font-bold text-foreground group-hover:text-inherit transition-colors">
                               {classLetter}
                             </span>
                           </button>
@@ -168,30 +178,56 @@ const ClassSelector = () => {
           </Card>
         ) : (
           <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-            {sortedGrades.map((grade) => (
-              <Card 
-                key={grade} 
-                className="p-4 sm:p-6 hover:shadow-lg transition-smooth"
-              >
-                <h3 className="text-base sm:text-lg font-bold text-center mb-3 sm:mb-4">
-                  Klasa {grade}
-                </h3>
-                <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
-                  {groupedClasses[grade].map((classInfo) => {
-                    const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim();
-                    return (
-                      <button
-                        key={classInfo.class_id}
-                        onClick={() => handleClassClick(classInfo)}
-                        className="w-11 h-11 sm:w-12 sm:h-12 rounded-full border-2 border-primary bg-background hover:bg-primary hover:text-primary-foreground transition-smooth flex items-center justify-center font-bold text-base sm:text-lg uppercase touch-manipulation active:scale-95"
-                      >
-                        {classLetter}
-                      </button>
-                    );
-                  })}
-                </div>
-              </Card>
-            ))}
+            {sortedGrades.map((grade, idx) => {
+              const bgColors = [
+                'bg-gradient-to-br from-primary/10 to-accent/10',
+                'bg-gradient-to-br from-info/10 to-success/10',
+                'bg-gradient-to-br from-accent/10 to-secondary/10',
+                'bg-gradient-to-br from-success/10 to-primary/10',
+              ];
+              const bgClass = bgColors[idx % bgColors.length];
+              
+              return (
+                <Card 
+                  key={grade} 
+                  className={cn(
+                    "p-4 sm:p-6 hover:shadow-colorful transition-bounce hover:scale-105 border-2",
+                    bgClass
+                  )}
+                >
+                  <h3 className="text-base sm:text-lg font-bold text-center mb-3 sm:mb-4 text-primary">
+                    🎯 Klasa {grade}
+                  </h3>
+                  <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
+                    {groupedClasses[grade].map((classInfo, btnIdx) => {
+                      const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim();
+                      const btnColors = [
+                        'border-primary bg-primary hover:bg-primary-foreground hover:text-primary hover:border-primary',
+                        'border-accent bg-accent hover:bg-accent-foreground hover:text-accent hover:border-accent',
+                        'border-info bg-info hover:bg-info-foreground hover:text-info hover:border-info',
+                        'border-success bg-success hover:bg-success-foreground hover:text-success hover:border-success',
+                      ];
+                      const btnColor = btnColors[btnIdx % btnColors.length];
+                      
+                      return (
+                        <button
+                          key={classInfo.class_id}
+                          onClick={() => handleClassClick(classInfo)}
+                          className={cn(
+                            "w-11 h-11 sm:w-12 sm:h-12 rounded-full border-3 text-white transition-bounce",
+                            "flex items-center justify-center font-bold text-base sm:text-lg uppercase",
+                            "touch-manipulation hover:scale-125 active:scale-95 hover:rotate-12 shadow-medium",
+                            btnColor
+                          )}
+                        >
+                          {classLetter}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </Card>
+              );
+            })}
           </div>
         )}
       </main>
