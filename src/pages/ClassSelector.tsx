@@ -95,36 +95,36 @@ const ClassSelector = () => {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm">
-        <div className="container max-w-2xl mx-auto px-4 py-6">
+        <div className="container max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
           {/* Date and Time Display */}
-          <div className="flex items-center justify-center gap-2 mb-4 text-muted-foreground">
-            <Clock className="h-4 w-4" />
-            <div className="text-sm font-medium">
+          <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4 text-muted-foreground">
+            <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+            <div className="text-xs sm:text-sm font-medium">
               <span>{weekdayName}</span>
-              <span className="mx-2">•</span>
+              <span className="mx-1 sm:mx-2">•</span>
               <span>{formattedDate}</span>
-              <span className="mx-2">•</span>
+              <span className="mx-1 sm:mx-2">•</span>
               <span className="font-mono">{formattedTime}</span>
             </div>
           </div>
 
           {/* Title */}
           <div className="text-center">
-            <div className="flex items-center justify-center gap-3 mb-2">
-              <GraduationCap className="h-8 w-8 text-primary" />
-              <h1 className="text-2xl font-bold text-foreground">Gdzie mam lekcję?</h1>
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2">
+              <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Gdzie mam lekcję?</h1>
             </div>
-            <p className="text-muted-foreground">{t.chooseClass}</p>
+            <p className="text-sm sm:text-base text-muted-foreground">{t.chooseClass}</p>
           </div>
           
           {/* View Toggle */}
-          <div className="flex items-center justify-center gap-3 mt-6">
-            <List className={`h-5 w-5 ${viewMode === 'list' ? 'text-primary' : 'text-muted-foreground'}`} />
+          <div className="flex items-center justify-center gap-3 mt-4 sm:mt-6 touch-manipulation">
+            <List className={`h-4 w-4 sm:h-5 sm:w-5 ${viewMode === 'list' ? 'text-primary' : 'text-muted-foreground'}`} />
             <Switch 
               checked={viewMode === 'grid'}
               onCheckedChange={(checked) => setViewMode(checked ? 'grid' : 'list')}
             />
-            <LayoutGrid className={`h-5 w-5 ${viewMode === 'grid' ? 'text-primary' : 'text-muted-foreground'}`} />
+            <LayoutGrid className={`h-4 w-4 sm:h-5 sm:w-5 ${viewMode === 'grid' ? 'text-primary' : 'text-muted-foreground'}`} />
           </div>
         </div>
       </header>
@@ -134,13 +134,13 @@ const ClassSelector = () => {
         {viewMode === 'list' ? (
           <Card className="shadow-large">
             <CardContent className="pt-6 pb-8">
-              <div className="space-y-8">
+              <div className="space-y-6">
                 {sortedGrades.map((grade) => (
-                  <div key={grade} className="flex items-center gap-4 flex-wrap">
-                    <h2 className="text-xl font-bold text-foreground whitespace-nowrap min-w-[100px]">
+                  <div key={grade} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                    <h2 className="text-lg sm:text-xl font-bold text-foreground whitespace-nowrap sm:min-w-[100px]">
                       Klasa {grade}
                     </h2>
-                    <div className="flex gap-3 flex-wrap">
+                    <div className="flex gap-2 sm:gap-3 flex-wrap">
                       {groupedClasses[grade].map((classInfo) => {
                         const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim();
                         return (
@@ -148,13 +148,13 @@ const ClassSelector = () => {
                             key={classInfo.class_id}
                             onClick={() => handleClassClick(classInfo)}
                             className={cn(
-                              'group relative h-32 w-32 rounded-xl border-2 transition-all duration-200',
+                              'group relative h-24 w-24 sm:h-32 sm:w-32 rounded-xl border-2 transition-all duration-200',
                               'bg-card hover:bg-primary/5 border-border hover:border-primary',
                               'hover:shadow-md hover:scale-105 active:scale-95',
-                              'flex items-center justify-center'
+                              'flex items-center justify-center touch-manipulation'
                             )}
                           >
-                            <span className="text-5xl font-bold text-foreground group-hover:text-primary transition-colors">
+                            <span className="text-4xl sm:text-5xl font-bold text-foreground group-hover:text-primary transition-colors">
                               {classLetter}
                             </span>
                           </button>
@@ -167,23 +167,23 @@ const ClassSelector = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {sortedGrades.map((grade) => (
               <Card 
                 key={grade} 
-                className="p-6 hover:shadow-lg transition-smooth"
+                className="p-4 sm:p-6 hover:shadow-lg transition-smooth"
               >
-                <h3 className="text-lg font-bold text-center mb-4">
+                <h3 className="text-base sm:text-lg font-bold text-center mb-3 sm:mb-4">
                   Klasa {grade}
                 </h3>
-                <div className="flex flex-wrap gap-3 justify-center">
+                <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
                   {groupedClasses[grade].map((classInfo) => {
                     const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim();
                     return (
                       <button
                         key={classInfo.class_id}
                         onClick={() => handleClassClick(classInfo)}
-                        className="w-12 h-12 rounded-full border-2 border-primary bg-background hover:bg-primary hover:text-primary-foreground transition-smooth flex items-center justify-center font-bold text-lg uppercase"
+                        className="w-11 h-11 sm:w-12 sm:h-12 rounded-full border-2 border-primary bg-background hover:bg-primary hover:text-primary-foreground transition-smooth flex items-center justify-center font-bold text-base sm:text-lg uppercase touch-manipulation active:scale-95"
                       >
                         {classLetter}
                       </button>
