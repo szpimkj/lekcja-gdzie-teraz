@@ -105,36 +105,45 @@ const ClassSelector = () => {
 
   return (
     <div className="min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background">
-      {/* Minimal Header with Time/Date */}
-      <header className="px-6 py-4 flex items-center justify-between">
-        <div className="flex flex-col">
-          <div className="text-sm font-medium text-muted-foreground">{weekdayName}</div>
-          <div className="text-2xl font-bold text-foreground">{formattedTime}</div>
-          <div className="text-xs text-muted-foreground">{formattedDate}</div>
+      {/* Compact Banner Header */}
+      <header className="bg-card/80 backdrop-blur-sm border-b border-border/50 shadow-soft">
+        <div className="px-4 md:px-6 py-3 flex items-center justify-between">
+          {/* Main Title - centered and prominent */}
+          <div className="flex-1 text-center">
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+              Wybierz swoją klasę
+            </h1>
+          </div>
+          
+          {/* Time/Date - compact on the right */}
+          <div className="hidden md:flex flex-col items-end text-xs text-muted-foreground">
+            <div className="font-semibold text-foreground">{formattedTime}</div>
+            <div>{weekdayName}, {formattedDate}</div>
+          </div>
+          
+          {/* Very small toggle for A/B testing */}
+          <div className="absolute top-2 right-2 md:relative md:top-0 md:right-0 flex items-center gap-1 opacity-20 hover:opacity-60 transition-opacity ml-3">
+            <List className={cn("h-2.5 w-2.5", viewMode === 'list' ? 'text-primary' : 'text-muted-foreground')} />
+            <Switch 
+              checked={viewMode === 'grid'}
+              onCheckedChange={(checked) => setViewMode(checked ? 'grid' : 'list')}
+              className="scale-50"
+            />
+            <LayoutGrid className={cn("h-2.5 w-2.5", viewMode === 'grid' ? 'text-primary' : 'text-muted-foreground')} />
+          </div>
         </div>
         
-        {/* Very small toggle for A/B testing */}
-        <div className="flex items-center gap-1.5 opacity-30 hover:opacity-100 transition-opacity">
-          <List className={cn("h-3 w-3", viewMode === 'list' ? 'text-primary' : 'text-muted-foreground')} />
-          <Switch 
-            checked={viewMode === 'grid'}
-            onCheckedChange={(checked) => setViewMode(checked ? 'grid' : 'list')}
-            className="scale-75"
-          />
-          <LayoutGrid className={cn("h-3 w-3", viewMode === 'grid' ? 'text-primary' : 'text-muted-foreground')} />
+        {/* Mobile time/date - below title */}
+        <div className="md:hidden px-4 pb-2 text-center text-xs text-muted-foreground">
+          <span className="font-semibold">{formattedTime}</span>
+          <span className="mx-2">•</span>
+          <span>{weekdayName}, {formattedDate}</span>
         </div>
       </header>
 
-      {/* Main Content - Single screen, no scroll */}
-      <main className="flex-1 flex flex-col items-center justify-center px-6 pb-8 overflow-hidden">
-        {/* Simple, clean title */}
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2 text-center">
-          {t.chooseClass}
-        </h1>
-        <p className="text-muted-foreground mb-8 md:mb-12 text-center">Wybierz swoją klasę</p>
-
-        {/* Clean class selection - fits on one screen */}
-        <div className="w-full max-w-5xl">
+      {/* Main Content - maximized space for class selection */}
+      <main className="flex-1 flex items-center justify-center px-4 md:px-6 py-4 md:py-6 overflow-hidden">
+        <div className="w-full max-w-6xl">
           {viewMode === 'list' ? (
             <div className="space-y-6 md:space-y-8">
               {sortedGrades.map((grade) => (
