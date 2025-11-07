@@ -152,15 +152,16 @@ export function getCurrentOrNextLesson(
   // No more lessons today - find tomorrow's first
   const nextWeekday = getNextWeekday(currentWeekday);
   const tomorrowLessons = filterLessons(lessons, class_id, nextWeekday, subgroup_id);
-  
+
   if (tomorrowLessons.length > 0) {
     const firstLesson = tomorrowLessons.sort((a, b) => a.period - b.period)[0];
-    
-    // Calculate minutes until tomorrow's lesson
+
+    // Calculate minutes until tomorrow's lesson, accounting for weekends
     const lessonTime = parseTime(firstLesson.start_time);
-    const tomorrow = now.plus({ days: 1 }).set({ hour: lessonTime.hour, minute: lessonTime.minute, second: 0 });
-    const minutesUntil = Math.floor(tomorrow.diff(now, 'minutes').minutes);
-    
+    const daysUntilNextLesson = getDaysUntilWeekday(currentWeekday, nextWeekday);
+    const nextLessonDate = now.plus({ days: daysUntilNextLesson }).set({ hour: lessonTime.hour, minute: lessonTime.minute, second: 0 });
+    const minutesUntil = Math.floor(nextLessonDate.diff(now, 'minutes').minutes);
+
     return {
       lesson: firstLesson,
       status: 'end-of-day',
@@ -198,4 +199,13 @@ function getNextWeekday(current: Weekday): Weekday {
   const weekdays: Weekday[] = ['MON', 'TUE', 'WED', 'THU', 'FRI'];
   const index = weekdays.indexOf(current);
   return weekdays[(index + 1) % 5];
+}
+
+function getDaysUntilWeekday(current: Weekday, target: Weekday): number {
+  // If transitioning from Friday to Monday, we need to account for the weekend
+  if (current === 'FRI' && target === 'MON') {
+    return 3; // Saturday + Sunday + Monday
+  }
+  // For all other weekday transitions, it's just 1 day
+  return 1;
 }
