@@ -167,39 +167,29 @@ const ClassSelector = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {classes.map((classInfo) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {sortedGrades.map((grade) => (
               <Card 
-                key={classInfo.class_id} 
+                key={grade} 
                 className="p-6 hover:shadow-lg transition-smooth"
               >
                 <h3 className="text-lg font-bold text-center mb-4">
-                  Klasa {classInfo.class_label}
+                  Klasa {grade}
                 </h3>
-                {classInfo.subgroups && classInfo.subgroups.length > 0 ? (
-                  <div className="flex flex-wrap gap-3 justify-center">
-                    {classInfo.subgroups.map((subgroup) => {
-                      const label = subgroup.subgroup_label.match(/\b([a-z])\b/i)?.[1] || 
-                                   subgroup.subgroup_label.charAt(0);
-                      return (
-                        <button
-                          key={subgroup.subgroup_id}
-                          onClick={() => handleClassClick(classInfo, subgroup.subgroup_id)}
-                          className="w-12 h-12 rounded-full border-2 border-primary bg-background hover:bg-primary hover:text-primary-foreground transition-smooth flex items-center justify-center font-bold text-lg"
-                        >
-                          {label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => handleClassClick(classInfo)}
-                    className="w-full py-2 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-smooth text-sm text-muted-foreground hover:text-primary"
-                  >
-                    Wybierz klasę
-                  </button>
-                )}
+                <div className="flex flex-wrap gap-3 justify-center">
+                  {groupedClasses[grade].map((classInfo) => {
+                    const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim();
+                    return (
+                      <button
+                        key={classInfo.class_id}
+                        onClick={() => handleClassClick(classInfo)}
+                        className="w-12 h-12 rounded-full border-2 border-primary bg-background hover:bg-primary hover:text-primary-foreground transition-smooth flex items-center justify-center font-bold text-lg uppercase"
+                      >
+                        {classLetter}
+                      </button>
+                    );
+                  })}
+                </div>
               </Card>
             ))}
           </div>
