@@ -211,7 +211,7 @@ const Index = () => {
         <div className="container max-w-2xl mx-auto px-4 py-4">
           <button
             onClick={() => navigate('/')}
-            className="w-full text-center hover:bg-secondary/50 rounded-lg px-4 py-2 transition-smooth"
+            className="w-full text-center bg-secondary/30 hover:bg-secondary/50 rounded-lg px-4 py-2 transition-smooth border border-border"
           >
             <h1 className="text-lg font-bold text-foreground">
               {class_label || t.noClass}
