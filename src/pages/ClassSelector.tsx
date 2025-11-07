@@ -163,6 +163,38 @@ const ClassSelector = () => {
     return { groupedClasses: grouped, sortedGrades: sorted };
   }, [classes]);
 
+  // Sorted classes for view 3 - by grade then letter
+  const sortedClassesView3 = useMemo(() => {
+    const romanToArabic = (roman: string): number => {
+      const romanMap: { [key: string]: number } = {
+        'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5, 
+        'VI': 6, 'VII': 7, 'VIII': 8, 'IX': 9, 'X': 10
+      };
+      return romanMap[roman] || 0;
+    };
+
+    return [...classes].sort((a, b) => {
+      // Extract grade numbers
+      const romanMatchA = a.class_label.match(/\b([IVX]+)\b/);
+      const romanMatchB = b.class_label.match(/\b([IVX]+)\b/);
+      
+      const gradeA = romanMatchA 
+        ? romanToArabic(romanMatchA[1]) 
+        : parseInt(a.class_label.match(/\d+/)?.[0] || '999');
+      const gradeB = romanMatchB 
+        ? romanToArabic(romanMatchB[1]) 
+        : parseInt(b.class_label.match(/\d+/)?.[0] || '999');
+      
+      // Sort by grade first
+      if (gradeA !== gradeB) return gradeA - gradeB;
+      
+      // If same grade, sort by letter
+      const letterA = a.class_label.replace(/\d+|[IVX]+/g, '').trim().toLowerCase();
+      const letterB = b.class_label.replace(/\d+|[IVX]+/g, '').trim().toLowerCase();
+      return letterA.localeCompare(letterB);
+    });
+  }, [classes]);
+
   // Format current date and time
   const weekdayNames = {
     pl: ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'],
@@ -298,7 +330,7 @@ const ClassSelector = () => {
             </div>
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4 justify-items-center">
-              {classes.map((classInfo) => {
+              {sortedClassesView3.map((classInfo) => {
                 const fullLabel = classInfo.class_label.replace(/\s/g, '').toUpperCase();
                 const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim().toUpperCase();
                 const letterIndex = classLetter.toLowerCase().charCodeAt(0) - 97;
