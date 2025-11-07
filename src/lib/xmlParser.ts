@@ -157,9 +157,16 @@ export async function parseScheduleXML(): Promise<{
     xmlDoc.querySelectorAll('classes > class').forEach(el => {
       const id = el.getAttribute('id')!;
       const name = el.getAttribute('name')!;
+      const short = el.getAttribute('short')!;
+      
+      // Filter out świetlica (afterschool) classes
+      if (name.toLowerCase().includes('św') || short.toLowerCase().includes('św')) {
+        return;
+      }
+      
       classes[id] = {
         name,
-        short: el.getAttribute('short')!,
+        short,
         classid: normalizeClassId(name),
       };
     });
@@ -218,7 +225,7 @@ export async function parseScheduleXML(): Promise<{
       // Process each class-group combination
       lesson.classids.forEach((classid, idx) => {
         const classInfo = classes[classid];
-        if (!classInfo) return;
+        if (!classInfo) return; // Skip filtered classes (e.g., świetlica)
         
         const groupid = lesson.groupids[idx];
         const group = groupid ? groups[groupid] : null;
