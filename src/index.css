@@ -41,6 +41,10 @@ All colors MUST be HSL.
     --success: 150 50% 70%;
     --success-foreground: 150 50% 25%;
 
+    /* Vibrant orange - energetic, warm */
+    --orange: 30 95% 60%;
+    --orange-foreground: 0 0% 100%;
+
     --destructive: 0 70% 60%;
     --destructive-foreground: 0 0% 100%;
 
