@@ -8,31 +8,19 @@ import { BottomNav } from '@/components/BottomNav';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { getCurrentOrNextLesson } from '@/lib/scheduleLogic';
-import { Lesson, CurrentLessonInfo, ClassInfo } from '@/types/schedule';
-import { Settings, Clock, MapPin, LayoutGrid, Home } from 'lucide-react';
+import { Lesson, CurrentLessonInfo } from '@/types/schedule';
+import { Settings, Clock, MapPin } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Switch } from '@/components/ui/switch';
 
 const Index = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentInfo, setCurrentInfo] = useState<CurrentLessonInfo | CurrentLessonInfo[] | null>(null);
   const [showClassPicker, setShowClassPicker] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [viewMode, setViewMode] = useState<'current' | 'grid'>('current');
-  const [allClasses, setAllClasses] = useState<ClassInfo[]>([]);
   
-  const { class_id, class_label, subgroup_id, subgroup_label, language, setClass, setSubgroup } = useSettingsStore();
+  const { class_id, class_label, subgroup_id, subgroup_label, language } = useSettingsStore();
   const t = translations[language];
   const navigate = useNavigate();
-
-  // Load all classes for grid view
-  useEffect(() => {
-    import('@/lib/xmlParser').then(({ getAllClasses }) => {
-      getAllClasses()
-        .then((data) => setAllClasses(data))
-        .catch(console.error);
-    });
-  }, []);
 
   // Redirect to class selector if no class selected
   useEffect(() => {
@@ -82,21 +70,6 @@ const Index = () => {
 
     const info = getCurrentOrNextLesson(lessons, class_id, subgroup_id, language);
     setCurrentInfo(info);
-  };
-
-  const handleClassSelect = (classInfo: ClassInfo, subgroupId?: string) => {
-    setClass(classInfo.class_id, classInfo.class_label);
-    
-    if (subgroupId) {
-      const subgroup = classInfo.subgroups?.find(s => s.subgroup_id === subgroupId);
-      if (subgroup) {
-        setSubgroup(subgroup.subgroup_id, subgroup.subgroup_label);
-      }
-    } else {
-      setSubgroup(null, null);
-    }
-    
-    setViewMode('current');
   };
 
   const renderCurrentInfo = () => {
@@ -222,49 +195,6 @@ const Index = () => {
     );
   };
 
-  const renderGridView = () => {
-    return (
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {allClasses.map((classInfo) => (
-          <Card 
-            key={classInfo.class_id} 
-            className="p-6 hover:shadow-lg transition-smooth cursor-pointer"
-            onClick={() => {
-              if (!classInfo.subgroups || classInfo.subgroups.length === 0) {
-                handleClassSelect(classInfo);
-              }
-            }}
-          >
-            <h3 className="text-lg font-bold text-center mb-4">
-              Klasa {classInfo.class_label}
-            </h3>
-            {classInfo.subgroups && classInfo.subgroups.length > 0 ? (
-              <div className="flex flex-wrap gap-3 justify-center">
-                {classInfo.subgroups.map((subgroup) => (
-                  <button
-                    key={subgroup.subgroup_id}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleClassSelect(classInfo, subgroup.subgroup_id);
-                    }}
-                    className="w-12 h-12 rounded-full border-2 border-primary bg-background hover:bg-primary hover:text-primary-foreground transition-smooth flex items-center justify-center font-bold"
-                  >
-                    {subgroup.subgroup_label.match(/\b([a-z])\b/i)?.[1] || 
-                     subgroup.subgroup_label.charAt(0)}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center text-sm text-muted-foreground">
-                Brak grup
-              </div>
-            )}
-          </Card>
-        ))}
-      </div>
-    );
-  };
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -291,44 +221,28 @@ const Index = () => {
               {subgroup_label || 'Dotknij aby zmienić'}
             </p>
           </button>
-          
-          {/* View Toggle */}
-          <div className="flex items-center justify-center gap-3 mt-4 pt-4 border-t border-border">
-            <Home className={`h-5 w-5 ${viewMode === 'current' ? 'text-primary' : 'text-muted-foreground'}`} />
-            <Switch 
-              checked={viewMode === 'grid'}
-              onCheckedChange={(checked) => setViewMode(checked ? 'grid' : 'current')}
-            />
-            <LayoutGrid className={`h-5 w-5 ${viewMode === 'grid' ? 'text-primary' : 'text-muted-foreground'}`} />
-          </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="container max-w-2xl mx-auto px-4 py-8 pb-28 space-y-6">
-        {viewMode === 'current' ? (
-          <>
-            {/* Big Main Button */}
-            <div className="text-center space-y-6">
-              <Button
-                onClick={handleMainButton}
-                disabled={loading}
-                size="lg"
-                className="w-full h-24 text-xl font-bold gradient-hero hover:opacity-90 transition-smooth shadow-large"
-              >
-                {t.mainButton}
-              </Button>
-            </div>
+        {/* Big Main Button */}
+        <div className="text-center space-y-6">
+          <Button
+            onClick={handleMainButton}
+            disabled={loading}
+            size="lg"
+            className="w-full h-24 text-xl font-bold gradient-hero hover:opacity-90 transition-smooth shadow-large"
+          >
+            {t.mainButton}
+          </Button>
+        </div>
 
-            {/* Current/Next Lesson Display */}
-            {currentInfo && (
-              <div className="mt-8">
-                {renderCurrentInfo()}
-              </div>
-            )}
-          </>
-        ) : (
-          renderGridView()
+        {/* Current/Next Lesson Display */}
+        {currentInfo && (
+          <div className="mt-8">
+            {renderCurrentInfo()}
+          </div>
         )}
       </main>
 

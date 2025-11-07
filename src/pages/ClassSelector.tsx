@@ -5,12 +5,14 @@ import { ClassInfo } from '@/types/schedule';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { Card, CardContent } from '@/components/ui/card';
-import { GraduationCap, Clock } from 'lucide-react';
+import { GraduationCap, Clock, LayoutGrid, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Switch } from '@/components/ui/switch';
 
 const ClassSelector = () => {
   const [classes, setClasses] = useState<ClassInfo[]>([]);
   const [currentTime, setCurrentTime] = useState(DateTime.now().setZone('Europe/Warsaw'));
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   
   const { setClass, setSubgroup, language } = useSettingsStore();
   const t = translations[language];
@@ -32,9 +34,18 @@ const ClassSelector = () => {
     });
   }, []);
 
-  const handleClassClick = (classInfo: ClassInfo) => {
+  const handleClassClick = (classInfo: ClassInfo, subgroupId?: string) => {
     setClass(classInfo.class_id, classInfo.class_label);
-    setSubgroup(null, null);
+    
+    if (subgroupId) {
+      const subgroup = classInfo.subgroups?.find(s => s.subgroup_id === subgroupId);
+      if (subgroup) {
+        setSubgroup(subgroup.subgroup_id, subgroup.subgroup_label);
+      }
+    } else {
+      setSubgroup(null, null);
+    }
+    
     navigate('/now');
   };
 
@@ -105,45 +116,94 @@ const ClassSelector = () => {
             </div>
             <p className="text-muted-foreground">{t.chooseClass}</p>
           </div>
+          
+          {/* View Toggle */}
+          <div className="flex items-center justify-center gap-3 mt-6">
+            <List className={`h-5 w-5 ${viewMode === 'list' ? 'text-primary' : 'text-muted-foreground'}`} />
+            <Switch 
+              checked={viewMode === 'grid'}
+              onCheckedChange={(checked) => setViewMode(checked ? 'grid' : 'list')}
+            />
+            <LayoutGrid className={`h-5 w-5 ${viewMode === 'grid' ? 'text-primary' : 'text-muted-foreground'}`} />
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="flex-1 container max-w-4xl mx-auto px-4 py-8">
-        <Card className="shadow-large">
-          <CardContent className="pt-6 pb-8">
-            <div className="space-y-8">
-              {sortedGrades.map((grade) => (
-                <div key={grade} className="flex items-center gap-4 flex-wrap">
-                  <h2 className="text-xl font-bold text-foreground whitespace-nowrap min-w-[100px]">
-                    Klasa {grade}
-                  </h2>
-                  <div className="flex gap-3 flex-wrap">
-                    {groupedClasses[grade].map((classInfo) => {
-                      const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim();
+        {viewMode === 'list' ? (
+          <Card className="shadow-large">
+            <CardContent className="pt-6 pb-8">
+              <div className="space-y-8">
+                {sortedGrades.map((grade) => (
+                  <div key={grade} className="flex items-center gap-4 flex-wrap">
+                    <h2 className="text-xl font-bold text-foreground whitespace-nowrap min-w-[100px]">
+                      Klasa {grade}
+                    </h2>
+                    <div className="flex gap-3 flex-wrap">
+                      {groupedClasses[grade].map((classInfo) => {
+                        const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim();
+                        return (
+                          <button
+                            key={classInfo.class_id}
+                            onClick={() => handleClassClick(classInfo)}
+                            className={cn(
+                              'group relative h-32 w-32 rounded-xl border-2 transition-all duration-200',
+                              'bg-card hover:bg-primary/5 border-border hover:border-primary',
+                              'hover:shadow-md hover:scale-105 active:scale-95',
+                              'flex items-center justify-center'
+                            )}
+                          >
+                            <span className="text-5xl font-bold text-foreground group-hover:text-primary transition-colors">
+                              {classLetter}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {classes.map((classInfo) => (
+              <Card 
+                key={classInfo.class_id} 
+                className="p-6 hover:shadow-lg transition-smooth"
+              >
+                <h3 className="text-lg font-bold text-center mb-4">
+                  Klasa {classInfo.class_label}
+                </h3>
+                {classInfo.subgroups && classInfo.subgroups.length > 0 ? (
+                  <div className="flex flex-wrap gap-3 justify-center">
+                    {classInfo.subgroups.map((subgroup) => {
+                      const label = subgroup.subgroup_label.match(/\b([a-z])\b/i)?.[1] || 
+                                   subgroup.subgroup_label.charAt(0);
                       return (
                         <button
-                          key={classInfo.class_id}
-                          onClick={() => handleClassClick(classInfo)}
-                          className={cn(
-                            'group relative h-32 w-32 rounded-xl border-2 transition-all duration-200',
-                            'bg-card hover:bg-primary/5 border-border hover:border-primary',
-                            'hover:shadow-md hover:scale-105 active:scale-95',
-                            'flex items-center justify-center'
-                          )}
+                          key={subgroup.subgroup_id}
+                          onClick={() => handleClassClick(classInfo, subgroup.subgroup_id)}
+                          className="w-12 h-12 rounded-full border-2 border-primary bg-background hover:bg-primary hover:text-primary-foreground transition-smooth flex items-center justify-center font-bold text-lg"
                         >
-                          <span className="text-5xl font-bold text-foreground group-hover:text-primary transition-colors">
-                            {classLetter}
-                          </span>
+                          {label}
                         </button>
                       );
                     })}
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                ) : (
+                  <button
+                    onClick={() => handleClassClick(classInfo)}
+                    className="w-full py-2 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-smooth text-sm text-muted-foreground hover:text-primary"
+                  >
+                    Wybierz klasę
+                  </button>
+                )}
+              </Card>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );
