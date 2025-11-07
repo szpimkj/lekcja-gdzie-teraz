@@ -186,7 +186,7 @@ const ClassSelector = () => {
                     <span className="text-lg font-semibold text-foreground">klasa</span>
                   </div>
                   
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 justify-center">
                     {groupedClasses[grade].map((classInfo, idx) => {
                       const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim().toUpperCase();
                       const colorClass = CLASS_COLORS[(gradeIdx + idx) % CLASS_COLORS.length];
