@@ -37,8 +37,20 @@ export const PinDialog = ({ open, onCorrectPin, onCancel, onWrongPin }: PinDialo
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleCancel}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={open} onOpenChange={(isOpen) => {
+      // Prevent closing the dialog by clicking outside or pressing escape
+      // Only allow closing via Cancel button
+      if (!isOpen && open) {
+        return;
+      }
+      handleCancel();
+    }}>
+      <DialogContent 
+        className="sm:max-w-md"
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Wprowadź PIN</DialogTitle>
           <DialogDescription>

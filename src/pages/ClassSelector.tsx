@@ -43,16 +43,24 @@ const ClassSelector = () => {
     const handleFullScreenChange = () => {
       const isCurrentlyFullScreen = !!document.fullscreenElement;
       
-      // If trying to exit fullscreen (not from our button) and not during PIN entry
-      if (!isCurrentlyFullScreen && isFullScreen && !pendingExitFullScreen && !showPinDialog) {
-        // Re-enter fullscreen immediately and show PIN dialog
-        document.documentElement.requestFullscreen().catch(console.error);
-        setShowPinDialog(true);
-      } else if (!isCurrentlyFullScreen && isFullScreen && showPinDialog) {
-        // If PIN dialog is shown and fullscreen is lost, re-enter immediately
-        document.documentElement.requestFullscreen().catch(console.error);
-      } else if (pendingExitFullScreen) {
-        setIsFullScreen(isCurrentlyFullScreen);
+      // If we're in fullscreen mode state but browser exited fullscreen
+      if (!isCurrentlyFullScreen && isFullScreen) {
+        if (pendingExitFullScreen) {
+          // This is an authorized exit with correct PIN
+          setIsFullScreen(false);
+          setPendingExitFullScreen(false);
+        } else {
+          // Unauthorized exit attempt - re-enter immediately
+          requestAnimationFrame(() => {
+            document.documentElement.requestFullscreen().catch((err) => {
+              console.error('Failed to re-enter fullscreen:', err);
+            });
+          });
+          // Show PIN dialog if not already showing
+          if (!showPinDialog) {
+            setShowPinDialog(true);
+          }
+        }
       }
     };
 
@@ -70,21 +78,34 @@ const ClassSelector = () => {
   };
 
   const handleCorrectPin = () => {
+    // Set flag to allow exit, then exit fullscreen
     setPendingExitFullScreen(true);
-    document.exitFullscreen();
     setShowPinDialog(false);
-    setIsFullScreen(false);
-    setTimeout(() => setPendingExitFullScreen(false), 100);
+    
+    document.exitFullscreen().catch((err) => {
+      console.error('Failed to exit fullscreen:', err);
+      setPendingExitFullScreen(false);
+    });
   };
 
   const handlePinCancel = () => {
+    // Just close the dialog, stay in fullscreen
     setShowPinDialog(false);
+    
+    // Ensure we're still in fullscreen
+    if (!document.fullscreenElement) {
+      requestAnimationFrame(() => {
+        document.documentElement.requestFullscreen().catch(console.error);
+      });
+    }
   };
 
   const handleWrongPin = () => {
     // Ensure we're still in fullscreen after wrong PIN
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
+      requestAnimationFrame(() => {
+        document.documentElement.requestFullscreen().catch(console.error);
+      });
     }
   };
 
