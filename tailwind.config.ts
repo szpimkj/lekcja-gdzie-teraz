@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        'fredoka': ['Fredoka', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        'poppins': ['Poppins', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
