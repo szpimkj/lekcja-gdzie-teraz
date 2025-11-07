@@ -9,7 +9,7 @@ interface PinDialogProps {
   onCancel: () => void;
 }
 
-const HARDCODED_PIN = '1234'; // Change this to your desired PIN
+const HARDCODED_PIN = '62007'; // Change this to your desired PIN
 
 export const PinDialog = ({ open, onCorrectPin, onCancel }: PinDialogProps) => {
   const [pin, setPin] = useState('');
@@ -49,13 +49,13 @@ export const PinDialog = ({ open, onCorrectPin, onCancel }: PinDialogProps) => {
             <Input
               type="password"
               inputMode="numeric"
-              maxLength={4}
+              maxLength={5}
               value={pin}
               onChange={(e) => {
                 setPin(e.target.value.replace(/\D/g, ''));
                 setError(false);
               }}
-              placeholder="****"
+              placeholder="*****"
               className={`text-center text-2xl tracking-widest ${error ? 'border-destructive' : ''}`}
               autoFocus
             />
