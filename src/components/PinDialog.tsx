@@ -7,11 +7,12 @@ interface PinDialogProps {
   open: boolean;
   onCorrectPin: () => void;
   onCancel: () => void;
+  onWrongPin?: () => void;
 }
 
 const HARDCODED_PIN = '62007'; // Change this to your desired PIN
 
-export const PinDialog = ({ open, onCorrectPin, onCancel }: PinDialogProps) => {
+export const PinDialog = ({ open, onCorrectPin, onCancel, onWrongPin }: PinDialogProps) => {
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
 
@@ -25,6 +26,7 @@ export const PinDialog = ({ open, onCorrectPin, onCancel }: PinDialogProps) => {
     } else {
       setError(true);
       setPin('');
+      onWrongPin?.();
     }
   };
 

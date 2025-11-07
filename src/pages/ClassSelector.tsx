@@ -78,6 +78,13 @@ const ClassSelector = () => {
     setShowPinDialog(false);
   };
 
+  const handleWrongPin = () => {
+    // Ensure we're still in fullscreen after wrong PIN
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    }
+  };
+
   useEffect(() => {
     import('@/lib/xmlParser').then(({ getAllClasses }) => {
       getAllClasses()
@@ -280,6 +287,7 @@ const ClassSelector = () => {
         open={showPinDialog}
         onCorrectPin={handleCorrectPin}
         onCancel={handlePinCancel}
+        onWrongPin={handleWrongPin}
       />
     </div>
   );
