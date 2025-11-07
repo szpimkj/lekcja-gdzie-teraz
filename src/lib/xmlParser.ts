@@ -75,6 +75,33 @@ function normalizeClassId(className: string): string {
   return normalized;
 }
 
+// Normalize class label for display
+function normalizeClassLabel(className: string): string {
+  const romanToArabic: Record<string, string> = {
+    'I': '1',
+    'II': '2',
+    'III': '3',
+    'IV': '4',
+    'V': '5',
+    'VI': '6',
+    'VII': '7',
+    'VIII': '8',
+  };
+  
+  let normalized = className.trim();
+  
+  // Handle Roman numerals (case insensitive)
+  for (const [roman, arabic] of Object.entries(romanToArabic)) {
+    const regex = new RegExp(`\\b${roman}\\b`, 'gi');
+    normalized = normalized.replace(regex, arabic);
+  }
+  
+  // Convert letter suffixes to lowercase (a, b, c, etc.)
+  normalized = normalized.replace(/\b([A-Z])\b/g, (match) => match.toLowerCase());
+  
+  return normalized;
+}
+
 // Map subgroup based on division tag and name
 function mapSubgroupId(groupName: string, divisionTag: string, entireClass: boolean): { 
   subgroup_id: string; 
@@ -168,7 +195,7 @@ export async function parseScheduleXML(): Promise<{
       }
       
       classes[id] = {
-        name,
+        name: normalizeClassLabel(name),
         short,
         classid: normalizeClassId(name),
       };
@@ -239,7 +266,7 @@ export async function parseScheduleXML(): Promise<{
         
         lessons.push({
           class_id: classInfo.classid,
-          class_label: classInfo.name,
+          class_label: classInfo.name, // Already normalized
           weekday,
           period: parseInt(period),
           start_time: periodInfo.start,
