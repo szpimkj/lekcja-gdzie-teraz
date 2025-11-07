@@ -4,9 +4,9 @@ import { DateTime } from 'luxon';
 import { ClassInfo } from '@/types/schedule';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
-import { LayoutGrid, List, Maximize, Minimize } from 'lucide-react';
+import { Maximize, Minimize } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PinDialog } from '@/components/PinDialog';
 
 // Soft pastel colors for class buttons - minimalistic and child-friendly
@@ -21,7 +21,7 @@ const CLASS_COLORS = [
 const ClassSelector = () => {
   const [classes, setClasses] = useState<ClassInfo[]>([]);
   const [currentTime, setCurrentTime] = useState(DateTime.now().setZone('Europe/Warsaw'));
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [viewMode, setViewMode] = useState<'view1' | 'view2' | 'view3'>('view1');
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showPinDialog, setShowPinDialog] = useState(false);
   const [pendingExitFullScreen, setPendingExitFullScreen] = useState(false);
@@ -175,17 +175,18 @@ const ClassSelector = () => {
             </h1>
           </div>
           
-          {/* Very small toggle for A/B testing */}
+          {/* View selector dropdown */}
           <div className="absolute top-2 right-2 md:relative md:top-0 md:right-0 flex flex-col items-end gap-1 ml-3">
-            <div className="flex items-center gap-1 opacity-20 hover:opacity-60 transition-opacity">
-              <List className={cn("h-2.5 w-2.5", viewMode === 'list' ? 'text-primary' : 'text-muted-foreground')} />
-              <Switch 
-                checked={viewMode === 'grid'}
-                onCheckedChange={(checked) => setViewMode(checked ? 'grid' : 'list')}
-                className="scale-50"
-              />
-              <LayoutGrid className={cn("h-2.5 w-2.5", viewMode === 'grid' ? 'text-primary' : 'text-muted-foreground')} />
-            </div>
+            <Select value={viewMode} onValueChange={(value: 'view1' | 'view2' | 'view3') => setViewMode(value)}>
+              <SelectTrigger className="w-24 h-7 text-xs opacity-60 hover:opacity-100 transition-opacity">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="view1">View 1</SelectItem>
+                <SelectItem value="view2">View 2</SelectItem>
+                <SelectItem value="view3">View 3</SelectItem>
+              </SelectContent>
+            </Select>
             
             <button
               onClick={toggleFullScreen}
@@ -212,7 +213,7 @@ const ClassSelector = () => {
       {/* Main Content - maximized space for class selection */}
       <main className="flex-1 flex items-center justify-center px-4 md:px-6 py-4 md:py-6 overflow-hidden">
         <div className="w-full max-w-6xl">
-          {viewMode === 'list' ? (
+          {viewMode === 'view1' ? (
             <div className="space-y-6 md:space-y-8">
               {sortedGrades.map((grade) => (
                 <div key={grade} className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
@@ -224,7 +225,6 @@ const ClassSelector = () => {
                   <div className="flex gap-3 md:gap-4 flex-wrap">
                     {groupedClasses[grade].map((classInfo, idx) => {
                       const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim().toUpperCase();
-                      // Use letter charCode for consistent colors: 'a'=0, 'b'=1, 'c'=2, etc.
                       const letterIndex = classLetter.toLowerCase().charCodeAt(0) - 97;
                       const colorClass = CLASS_COLORS[letterIndex % CLASS_COLORS.length];
                       
@@ -247,7 +247,7 @@ const ClassSelector = () => {
                 </div>
               ))}
             </div>
-          ) : (
+          ) : viewMode === 'view2' ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {sortedGrades.map((grade, gradeIdx) => (
                 <div key={grade} className="space-y-3">
@@ -259,7 +259,6 @@ const ClassSelector = () => {
                   <div className="flex flex-wrap gap-2 justify-center">
                     {groupedClasses[grade].map((classInfo, idx) => {
                       const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim().toUpperCase();
-                      // Use letter charCode for consistent colors: 'a'=0, 'b'=1, 'c'=2, etc.
                       const letterIndex = classLetter.toLowerCase().charCodeAt(0) - 97;
                       const colorClass = CLASS_COLORS[letterIndex % CLASS_COLORS.length];
                       
@@ -281,6 +280,30 @@ const ClassSelector = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4 justify-items-center">
+              {classes.map((classInfo) => {
+                const fullLabel = classInfo.class_label.replace(/\s/g, '').toUpperCase();
+                const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim().toUpperCase();
+                const letterIndex = classLetter.toLowerCase().charCodeAt(0) - 97;
+                const colorClass = CLASS_COLORS[letterIndex % CLASS_COLORS.length];
+                
+                return (
+                  <button
+                    key={classInfo.class_id}
+                    onClick={() => handleClassClick(classInfo)}
+                    className={cn(
+                      'h-20 w-20 md:h-24 md:w-24 rounded-3xl transition-smooth shadow-soft',
+                      'flex items-center justify-center touch-manipulation font-bold text-2xl md:text-3xl',
+                      'hover:scale-110 hover:shadow-medium active:scale-95',
+                      colorClass
+                    )}
+                  >
+                    {fullLabel}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
