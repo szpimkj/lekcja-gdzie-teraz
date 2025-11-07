@@ -4,9 +4,10 @@ import { DateTime } from 'luxon';
 import { ClassInfo } from '@/types/schedule';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
-import { LayoutGrid, List } from 'lucide-react';
+import { LayoutGrid, List, Maximize, Minimize } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
+import { PinDialog } from '@/components/PinDialog';
 
 // Soft pastel colors for class buttons - minimalistic and child-friendly
 const CLASS_COLORS = [
@@ -21,6 +22,9 @@ const ClassSelector = () => {
   const [classes, setClasses] = useState<ClassInfo[]>([]);
   const [currentTime, setCurrentTime] = useState(DateTime.now().setZone('Europe/Warsaw'));
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [showPinDialog, setShowPinDialog] = useState(false);
+  const [pendingExitFullScreen, setPendingExitFullScreen] = useState(false);
   
   const { setClass, setSubgroup, language } = useSettingsStore();
   const t = translations[language];
@@ -33,6 +37,46 @@ const ClassSelector = () => {
     }, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // Handle fullscreen changes
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      const isCurrentlyFullScreen = !!document.fullscreenElement;
+      
+      // If trying to exit fullscreen (not from our button)
+      if (!isCurrentlyFullScreen && isFullScreen && !pendingExitFullScreen) {
+        // Re-enter fullscreen and show PIN dialog
+        document.documentElement.requestFullscreen();
+        setShowPinDialog(true);
+      } else {
+        setIsFullScreen(isCurrentlyFullScreen);
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
+  }, [isFullScreen, pendingExitFullScreen]);
+
+  const toggleFullScreen = () => {
+    if (!isFullScreen) {
+      document.documentElement.requestFullscreen();
+      setIsFullScreen(true);
+    } else {
+      setShowPinDialog(true);
+    }
+  };
+
+  const handleCorrectPin = () => {
+    setPendingExitFullScreen(true);
+    document.exitFullscreen();
+    setShowPinDialog(false);
+    setIsFullScreen(false);
+    setTimeout(() => setPendingExitFullScreen(false), 100);
+  };
+
+  const handlePinCancel = () => {
+    setShowPinDialog(false);
+  };
 
   useEffect(() => {
     import('@/lib/xmlParser').then(({ getAllClasses }) => {
@@ -122,14 +166,28 @@ const ClassSelector = () => {
           </div>
           
           {/* Very small toggle for A/B testing */}
-          <div className="absolute top-2 right-2 md:relative md:top-0 md:right-0 flex items-center gap-1 opacity-20 hover:opacity-60 transition-opacity ml-3">
-            <List className={cn("h-2.5 w-2.5", viewMode === 'list' ? 'text-primary' : 'text-muted-foreground')} />
-            <Switch 
-              checked={viewMode === 'grid'}
-              onCheckedChange={(checked) => setViewMode(checked ? 'grid' : 'list')}
-              className="scale-50"
-            />
-            <LayoutGrid className={cn("h-2.5 w-2.5", viewMode === 'grid' ? 'text-primary' : 'text-muted-foreground')} />
+          <div className="absolute top-2 right-2 md:relative md:top-0 md:right-0 flex flex-col items-end gap-1 ml-3">
+            <div className="flex items-center gap-1 opacity-20 hover:opacity-60 transition-opacity">
+              <List className={cn("h-2.5 w-2.5", viewMode === 'list' ? 'text-primary' : 'text-muted-foreground')} />
+              <Switch 
+                checked={viewMode === 'grid'}
+                onCheckedChange={(checked) => setViewMode(checked ? 'grid' : 'list')}
+                className="scale-50"
+              />
+              <LayoutGrid className={cn("h-2.5 w-2.5", viewMode === 'grid' ? 'text-primary' : 'text-muted-foreground')} />
+            </div>
+            
+            <button
+              onClick={toggleFullScreen}
+              className="opacity-20 hover:opacity-60 transition-opacity"
+              title={isFullScreen ? "Wyjdź z trybu pełnoekranowego" : "Tryb pełnoekranowy"}
+            >
+              {isFullScreen ? (
+                <Minimize className="h-3 w-3 text-muted-foreground" />
+              ) : (
+                <Maximize className="h-3 w-3 text-muted-foreground" />
+              )}
+            </button>
           </div>
         </div>
         
@@ -217,6 +275,12 @@ const ClassSelector = () => {
           )}
         </div>
       </main>
+
+      <PinDialog
+        open={showPinDialog}
+        onCorrectPin={handleCorrectPin}
+        onCancel={handlePinCancel}
+      />
     </div>
   );
 };
