@@ -4,32 +4,17 @@ import { DateTime } from 'luxon';
 import { ClassInfo } from '@/types/schedule';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
-import { Card, CardContent } from '@/components/ui/card';
-import { GraduationCap, Clock, LayoutGrid, List } from 'lucide-react';
+import { LayoutGrid, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 
-// Move static arrays outside component to prevent recreating on every render
-const HOVER_COLORS = [
-  'hover:bg-primary hover:border-primary hover:text-primary-foreground hover:shadow-colorful',
-  'hover:bg-accent hover:border-accent hover:text-accent-foreground hover:shadow-colorful',
-  'hover:bg-info hover:border-info hover:text-info-foreground hover:shadow-colorful',
-  'hover:bg-success hover:border-success hover:text-success-foreground hover:shadow-colorful',
-  'hover:bg-secondary hover:border-secondary hover:text-secondary-foreground hover:shadow-colorful'
-];
-
-const BG_GRADIENTS = [
-  'bg-gradient-to-br from-primary/10 to-accent/10',
-  'bg-gradient-to-br from-info/10 to-success/10',
-  'bg-gradient-to-br from-accent/10 to-secondary/10',
-  'bg-gradient-to-br from-success/10 to-primary/10',
-];
-
-const BTN_COLORS = [
-  'border-primary bg-primary hover:bg-primary-foreground hover:text-primary hover:border-primary',
-  'border-accent bg-accent hover:bg-accent-foreground hover:text-accent hover:border-accent',
-  'border-info bg-info hover:bg-info-foreground hover:text-info hover:border-info',
-  'border-success bg-success hover:bg-success-foreground hover:text-success hover:border-success',
+// Soft pastel colors for class buttons - minimalistic and child-friendly
+const CLASS_COLORS = [
+  'bg-primary text-primary-foreground',
+  'bg-accent text-accent-foreground',
+  'bg-info text-info-foreground',
+  'bg-success text-success-foreground',
+  'bg-secondary text-secondary-foreground',
 ];
 
 const ClassSelector = () => {
@@ -119,113 +104,60 @@ const ClassSelector = () => {
   const formattedTime = currentTime.toFormat('HH:mm:ss');
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm">
-        <div className="container max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
-          {/* Date and Time Display */}
-          <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4 text-muted-foreground">
-            <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-            <div className="text-xs sm:text-sm font-medium">
-              <span>{weekdayName}</span>
-              <span className="mx-1 sm:mx-2">•</span>
-              <span>{formattedDate}</span>
-              <span className="mx-1 sm:mx-2">•</span>
-              <span className="font-mono">{formattedTime}</span>
-            </div>
-          </div>
-
-          {/* Title */}
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2">
-              <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-accent animate-pulse" />
-              <h1 className="text-xl sm:text-2xl font-bold text-primary">Gdzie mam lekcję? 📚</h1>
-            </div>
-            <p className="text-sm sm:text-base text-muted-foreground font-medium">✨ {t.chooseClass}</p>
-          </div>
-          
-          {/* View Toggle */}
-          <div className="flex items-center justify-center gap-3 mt-4 sm:mt-6 touch-manipulation">
-            <List className={`h-4 w-4 sm:h-5 sm:w-5 ${viewMode === 'list' ? 'text-primary' : 'text-muted-foreground'}`} />
-            <Switch 
-              checked={viewMode === 'grid'}
-              onCheckedChange={(checked) => setViewMode(checked ? 'grid' : 'list')}
-            />
-            <LayoutGrid className={`h-4 w-4 sm:h-5 sm:w-5 ${viewMode === 'grid' ? 'text-primary' : 'text-muted-foreground'}`} />
-          </div>
+    <div className="min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background">
+      {/* Minimal Header with Time/Date */}
+      <header className="px-6 py-4 flex items-center justify-between">
+        <div className="flex flex-col">
+          <div className="text-sm font-medium text-muted-foreground">{weekdayName}</div>
+          <div className="text-2xl font-bold text-foreground">{formattedTime}</div>
+          <div className="text-xs text-muted-foreground">{formattedDate}</div>
+        </div>
+        
+        {/* Very small toggle for A/B testing */}
+        <div className="flex items-center gap-1.5 opacity-30 hover:opacity-100 transition-opacity">
+          <List className={cn("h-3 w-3", viewMode === 'list' ? 'text-primary' : 'text-muted-foreground')} />
+          <Switch 
+            checked={viewMode === 'grid'}
+            onCheckedChange={(checked) => setViewMode(checked ? 'grid' : 'list')}
+            className="scale-75"
+          />
+          <LayoutGrid className={cn("h-3 w-3", viewMode === 'grid' ? 'text-primary' : 'text-muted-foreground')} />
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 container max-w-4xl mx-auto px-4 py-8">
-        {viewMode === 'list' ? (
-          <Card className="shadow-large">
-            <CardContent className="pt-6 pb-8">
-              <div className="space-y-6">
-                {sortedGrades.map((grade) => (
-                  <div key={grade} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                    <h2 className="text-lg sm:text-xl font-bold text-primary whitespace-nowrap sm:min-w-[100px]">
-                      🎓 Klasa {grade}
-                    </h2>
-                     <div className="flex gap-2 sm:gap-3 flex-wrap">
-                      {groupedClasses[grade].map((classInfo) => {
-                        const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim();
-                        const colorClass = HOVER_COLORS[classInfo.class_id.charCodeAt(classInfo.class_id.length - 1) % HOVER_COLORS.length];
-                        
-                        return (
-                          <button
-                            key={classInfo.class_id}
-                            onClick={() => handleClassClick(classInfo)}
-                            className={cn(
-                              'group relative h-24 w-24 sm:h-32 sm:w-32 rounded-2xl border-3 transition-bounce',
-                              'bg-card border-border shadow-soft',
-                              'hover:scale-110 active:scale-95 hover:-rotate-3',
-                              'flex items-center justify-center touch-manipulation',
-                              colorClass
-                            )}
-                          >
-                            <span className="text-4xl sm:text-5xl font-bold text-foreground group-hover:text-inherit transition-colors">
-                              {classLetter}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
+      {/* Main Content - Single screen, no scroll */}
+      <main className="flex-1 flex flex-col items-center justify-center px-6 pb-8 overflow-hidden">
+        {/* Simple, clean title */}
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2 text-center">
+          {t.chooseClass}
+        </h1>
+        <p className="text-muted-foreground mb-8 md:mb-12 text-center">Wybierz swoją klasę</p>
+
+        {/* Clean class selection - fits on one screen */}
+        <div className="w-full max-w-5xl">
+          {viewMode === 'list' ? (
+            <div className="space-y-6 md:space-y-8">
+              {sortedGrades.map((grade) => (
+                <div key={grade} className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+                  <div className="flex items-center gap-2 md:min-w-[120px]">
+                    <span className="text-4xl md:text-5xl font-bold text-primary/20">{grade}</span>
+                    <span className="text-lg font-medium text-muted-foreground">klasa</span>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-            {sortedGrades.map((grade, idx) => {
-              const bgClass = BG_GRADIENTS[idx % BG_GRADIENTS.length];
-              
-              return (
-                <Card 
-                  key={grade} 
-                  className={cn(
-                    "p-4 sm:p-6 hover:shadow-colorful transition-bounce hover:scale-105 border-2",
-                    bgClass
-                  )}
-                >
-                  <h3 className="text-base sm:text-lg font-bold text-center mb-3 sm:mb-4 text-primary">
-                    🎯 Klasa {grade}
-                  </h3>
-                  <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
-                    {groupedClasses[grade].map((classInfo, btnIdx) => {
-                      const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim();
-                      const btnColor = BTN_COLORS[btnIdx % BTN_COLORS.length];
+                  
+                  <div className="flex gap-3 md:gap-4 flex-wrap">
+                    {groupedClasses[grade].map((classInfo, idx) => {
+                      const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim().toUpperCase();
+                      const colorClass = CLASS_COLORS[idx % CLASS_COLORS.length];
                       
                       return (
                         <button
                           key={classInfo.class_id}
                           onClick={() => handleClassClick(classInfo)}
                           className={cn(
-                            "w-11 h-11 sm:w-12 sm:h-12 rounded-full border-3 text-white transition-bounce",
-                            "flex items-center justify-center font-bold text-base sm:text-lg uppercase",
-                            "touch-manipulation hover:scale-125 active:scale-95 hover:rotate-12 shadow-medium",
-                            btnColor
+                            'h-20 w-20 md:h-24 md:w-24 rounded-3xl transition-smooth shadow-soft',
+                            'flex items-center justify-center touch-manipulation font-bold text-3xl md:text-4xl',
+                            'hover:scale-110 hover:shadow-medium active:scale-95',
+                            colorClass
                           )}
                         >
                           {classLetter}
@@ -233,11 +165,44 @@ const ClassSelector = () => {
                       );
                     })}
                   </div>
-                </Card>
-              );
-            })}
-          </div>
-        )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {sortedGrades.map((grade, gradeIdx) => (
+                <div key={grade} className="space-y-3">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-3xl font-bold text-primary/20">{grade}</span>
+                    <span className="text-sm text-muted-foreground">klasa</span>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {groupedClasses[grade].map((classInfo, idx) => {
+                      const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim().toUpperCase();
+                      const colorClass = CLASS_COLORS[(gradeIdx + idx) % CLASS_COLORS.length];
+                      
+                      return (
+                        <button
+                          key={classInfo.class_id}
+                          onClick={() => handleClassClick(classInfo)}
+                          className={cn(
+                            'h-16 w-16 rounded-2xl transition-smooth shadow-soft',
+                            'flex items-center justify-center touch-manipulation font-bold text-2xl',
+                            'hover:scale-110 hover:shadow-medium active:scale-95',
+                            colorClass
+                          )}
+                        >
+                          {classLetter}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </main>
     </div>
   );

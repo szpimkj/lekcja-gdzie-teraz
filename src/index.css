@@ -8,62 +8,61 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 45 100% 96%;
-    --foreground: 240 30% 20%;
+    /* Soft pastel background */
+    --background: 270 40% 97%;
+    --foreground: 240 20% 25%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 30% 20%;
+    --card-foreground: 240 20% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 30% 20%;
+    --popover-foreground: 240 20% 25%;
 
-    /* Vibrant purple - fun, creative */
-    --primary: 270 75% 55%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 270 75% 70%;
+    /* Soft purple - calm, creative */
+    --primary: 270 60% 70%;
+    --primary-foreground: 270 60% 25%;
+    
+    /* Soft peach */
+    --secondary: 20 80% 80%;
+    --secondary-foreground: 20 60% 30%;
 
-    /* Playful orange */
-    --secondary: 30 95% 65%;
-    --secondary-foreground: 30 30% 20%;
+    --muted: 270 30% 95%;
+    --muted-foreground: 240 10% 55%;
 
-    --muted: 45 50% 95%;
-    --muted-foreground: 240 15% 50%;
+    /* Soft pink - gentle, friendly */
+    --accent: 340 70% 80%;
+    --accent-foreground: 340 70% 30%;
 
-    /* Electric pink - energy, excitement */
-    --accent: 330 85% 55%;
-    --accent-foreground: 0 0% 100%;
+    /* Soft blue - trust, calm */
+    --info: 200 70% 75%;
+    --info-foreground: 200 70% 25%;
 
-    /* Fun blue - trust, playful */
-    --info: 200 85% 55%;
-    --info-foreground: 0 0% 100%;
+    /* Soft green - success, growth */
+    --success: 150 50% 70%;
+    --success-foreground: 150 50% 25%;
 
-    /* Bright green - success */
-    --success: 142 70% 50%;
-    --success-foreground: 0 0% 100%;
-
-    --destructive: 0 80% 60%;
+    --destructive: 0 70% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 270 30% 90%;
-    --input: 270 30% 90%;
-    --ring: 270 75% 55%;
+    --border: 270 20% 92%;
+    --input: 270 20% 92%;
+    --ring: 270 60% 70%;
 
-    --radius: 1rem;
+    --radius: 1.5rem;
 
-    /* Playful Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(270 75% 55%), hsl(330 85% 55%));
-    --gradient-hero: linear-gradient(135deg, hsl(270 75% 55%) 0%, hsl(30 95% 65%) 50%, hsl(330 85% 55%) 100%);
-    --gradient-fun: linear-gradient(135deg, hsl(200 85% 55%), hsl(142 70% 50%));
+    /* Soft Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(270 60% 85%), hsl(340 70% 85%));
+    --gradient-secondary: linear-gradient(135deg, hsl(200 70% 85%), hsl(150 50% 85%));
+    --gradient-background: linear-gradient(135deg, hsl(270 40% 97%), hsl(200 40% 97%));
     
-    /* Colorful Shadows */
-    --shadow-soft: 0 4px 12px -2px hsl(270 75% 55% / 0.15);
-    --shadow-medium: 0 8px 24px -4px hsl(270 75% 55% / 0.2);
-    --shadow-large: 0 16px 48px -8px hsl(270 75% 55% / 0.25);
-    --shadow-colorful: 0 8px 32px -4px hsl(330 85% 55% / 0.3);
+    /* Gentle Shadows */
+    --shadow-soft: 0 2px 8px -2px hsl(270 40% 50% / 0.08);
+    --shadow-medium: 0 4px 16px -4px hsl(270 40% 50% / 0.12);
+    --shadow-large: 0 8px 32px -8px hsl(270 40% 50% / 0.15);
 
     /* Smooth Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
   .dark {
