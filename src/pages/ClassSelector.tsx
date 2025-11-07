@@ -181,7 +181,7 @@ const ClassSelector = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {sortedGrades.map((grade, gradeIdx) => (
                 <div key={grade} className="space-y-3">
-                  <div className="flex items-baseline gap-2">
+                  <div className="flex items-baseline gap-2 justify-center">
                     <span className="text-4xl font-bold text-primary">{grade}</span>
                     <span className="text-lg font-semibold text-foreground">klasa</span>
                   </div>
