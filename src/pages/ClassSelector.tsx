@@ -162,17 +162,17 @@ const ClassSelector = () => {
       {/* Compact Banner Header */}
       <header className="bg-card/80 backdrop-blur-sm border-b border-border/50 shadow-soft">
         <div className="px-4 md:px-6 py-3 flex items-center justify-between">
+          {/* Time/Date - compact on the left */}
+          <div className="hidden md:flex flex-col items-start text-xs text-muted-foreground">
+            <div className="font-semibold text-foreground">{formattedTime}</div>
+            <div>{weekdayName}, {formattedDate}</div>
+          </div>
+          
           {/* Main Title - centered and prominent */}
           <div className="flex-1 text-center">
             <h1 className="text-2xl md:text-3xl font-bold text-foreground">
               Wybierz swoją klasę
             </h1>
-          </div>
-          
-          {/* Time/Date - compact on the right */}
-          <div className="hidden md:flex flex-col items-end text-xs text-muted-foreground">
-            <div className="font-semibold text-foreground">{formattedTime}</div>
-            <div>{weekdayName}, {formattedDate}</div>
           </div>
           
           {/* Very small toggle for A/B testing */}
