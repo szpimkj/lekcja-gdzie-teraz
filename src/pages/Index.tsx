@@ -211,23 +211,13 @@ const Index = () => {
         <div className="container max-w-2xl mx-auto px-4 py-4">
           <button
             onClick={() => navigate('/')}
-            className="w-full text-center hover:bg-secondary/50 rounded-lg px-4 py-2 transition-smooth group"
+            className="w-full text-center hover:bg-secondary/50 rounded-lg px-4 py-2 transition-smooth"
           >
-            <div className="flex items-center justify-center gap-2">
-              <h1 className="text-lg font-bold text-foreground">
-                {class_label || t.noClass}
-              </h1>
-              <svg 
-                className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-smooth" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
+            <h1 className="text-lg font-bold text-foreground">
+              {class_label || t.noClass}
+            </h1>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {subgroup_label || 'Dotknij aby zmienić'}
+              Zmień klasę
             </p>
           </button>
         </div>
