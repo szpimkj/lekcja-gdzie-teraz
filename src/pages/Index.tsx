@@ -12,6 +12,26 @@ import { Lesson, CurrentLessonInfo } from '@/types/schedule';
 import { Settings, Clock, MapPin } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
+// Helper function to format time with days, hours, and minutes
+const formatTimeUntil = (minutes: number): string => {
+  if (minutes >= 1440) {
+    // 24+ hours: show days, hours, and minutes
+    const days = Math.floor(minutes / 1440);
+    const remaining = minutes % 1440;
+    const hours = Math.floor(remaining / 60);
+    const mins = remaining % 60;
+    return `${days}d ${hours}h ${mins}min`;
+  } else if (minutes >= 60) {
+    // 1-23 hours: show hours and minutes
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}min`;
+  } else {
+    // Less than 1 hour: show just minutes
+    return `${minutes} min`;
+  }
+};
+
 const Index = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentInfo, setCurrentInfo] = useState<CurrentLessonInfo | CurrentLessonInfo[] | null>(null);
@@ -102,12 +122,8 @@ const Index = () => {
           {isBreakTime && (
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-primary">
-                {firstInfo.minutesUntil 
-                  ? `Uff! Masz teraz przerwę, następne zajęcia zaczynają się za ${
-                      firstInfo.minutesUntil >= 60 
-                        ? `${Math.floor(firstInfo.minutesUntil / 60)}h ${firstInfo.minutesUntil % 60}min`
-                        : `${firstInfo.minutesUntil} min`
-                    }`
+                {firstInfo.minutesUntil
+                  ? `Uff! Masz teraz przerwę, następne zajęcia zaczynają się za ${formatTimeUntil(firstInfo.minutesUntil)}`
                   : 'Uff! Masz teraz przerwę. Następne zajęcia to:'
                 }
               </h2>
@@ -177,12 +193,8 @@ const Index = () => {
         {isBreakTime && (
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-primary">
-              {currentInfo.minutesUntil 
-                ? `Uff! Masz teraz przerwę, następne zajęcia zaczynają się za ${
-                    currentInfo.minutesUntil >= 60 
-                      ? `${Math.floor(currentInfo.minutesUntil / 60)}h ${currentInfo.minutesUntil % 60}min`
-                      : `${currentInfo.minutesUntil} min`
-                  }`
+              {currentInfo.minutesUntil
+                ? `Uff! Masz teraz przerwę, następne zajęcia zaczynają się za ${formatTimeUntil(currentInfo.minutesUntil)}`
                 : 'Uff! Masz teraz przerwę. Następne zajęcia to:'
               }
             </h2>
