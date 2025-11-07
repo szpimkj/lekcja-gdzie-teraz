@@ -35,15 +35,15 @@ export function LessonCard({ lesson, status, minutesInfo, className = '' }: Less
           )}
         </div>
 
-        <div className="flex flex-wrap gap-4 text-sm">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <MapPin className="h-4 w-4" />
-            <span className="font-medium">{lesson.room}</span>
-          </div>
-          
+        <div className="flex flex-col gap-3 text-sm items-start">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Clock className="h-4 w-4" />
             <span>{lesson.start_time} - {lesson.end_time}</span>
+          </div>
+          
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <MapPin className="h-4 w-4" />
+            <span className="font-medium">{lesson.room}</span>
           </div>
           
           {lesson.teacher && (

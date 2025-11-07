@@ -116,7 +116,7 @@ const Index = () => {
           
           <div className="flex gap-4 items-start">
             {/* Time and period on the left */}
-            <div className="flex flex-col gap-1 min-w-[120px] pt-4">
+            <div className="flex flex-col gap-1 min-w-[120px] pt-4 items-start">
               <span className="text-primary font-medium text-sm mb-1">
                 {t.period} {firstInfo.lesson.period}
               </span>
