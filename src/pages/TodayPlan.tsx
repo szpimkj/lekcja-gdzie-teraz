@@ -22,46 +22,47 @@ const TodayPlan = () => {
     if (!class_id) return;
     
     setLoading(true);
-    fetch(`/data/classes/${class_id}.json`)
-      .then((res) => res.json())
-      .then((data: Lesson[]) => {
-        const currentWeekday = getCurrentWeekday();
-        if (!currentWeekday) {
-          setLessons([]);
-          setLoading(false);
-          return;
-        }
-
-        const todayLessons = data
-          .filter(l => l.class_id === class_id && l.weekday === currentWeekday)
-          .filter(l => {
-            if (!subgroup_id) return true;
-            return l.subgroup_id === '' || l.subgroup_id === subgroup_id;
-          })
-          .sort((a, b) => a.period - b.period);
-
-        // Group by period to show simultaneous classes together
-        const groupedByPeriod = todayLessons.reduce((acc, lesson) => {
-          const key = `${lesson.period}-${lesson.start_time}`;
-          if (!acc[key]) {
-            acc[key] = {
-              period: lesson.period,
-              start_time: lesson.start_time,
-              end_time: lesson.end_time,
-              lessons: []
-            };
+    import('@/lib/xmlParser').then(({ getLessonsForClass }) => {
+      getLessonsForClass(class_id)
+        .then((data: Lesson[]) => {
+          const currentWeekday = getCurrentWeekday();
+          if (!currentWeekday) {
+            setLessons([]);
+            setLoading(false);
+            return;
           }
-          acc[key].lessons.push(lesson);
-          return acc;
-        }, {} as Record<string, { period: number; start_time: string; end_time: string; lessons: Lesson[] }>);
 
-        setLessons(Object.values(groupedByPeriod));
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Failed to load lessons:', err);
-        setLoading(false);
-      });
+          const todayLessons = data
+            .filter(l => l.class_id === class_id && l.weekday === currentWeekday)
+            .filter(l => {
+              if (!subgroup_id) return true;
+              return l.subgroup_id === '' || l.subgroup_id === subgroup_id;
+            })
+            .sort((a, b) => a.period - b.period);
+
+          // Group by period to show simultaneous classes together
+          const groupedByPeriod = todayLessons.reduce((acc, lesson) => {
+            const key = `${lesson.period}-${lesson.start_time}`;
+            if (!acc[key]) {
+              acc[key] = {
+                period: lesson.period,
+                start_time: lesson.start_time,
+                end_time: lesson.end_time,
+                lessons: []
+              };
+            }
+            acc[key].lessons.push(lesson);
+            return acc;
+          }, {} as Record<string, { period: number; start_time: string; end_time: string; lessons: Lesson[] }>);
+
+          setLessons(Object.values(groupedByPeriod));
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Failed to load lessons:', err);
+          setLoading(false);
+        });
+    });
   }, [class_id, subgroup_id]);
 
   return (

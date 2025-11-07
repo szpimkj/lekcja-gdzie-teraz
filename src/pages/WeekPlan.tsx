@@ -30,22 +30,23 @@ const WeekPlan = () => {
     if (!class_id) return;
     
     setLoading(true);
-    fetch(`/data/classes/${class_id}.json`)
-      .then((res) => res.json())
-      .then((data: Lesson[]) => {
-        const filtered = data
-          .filter(l => l.class_id === class_id)
-          .filter(l => {
-            if (!subgroup_id) return true;
-            return l.subgroup_id === '' || l.subgroup_id === subgroup_id;
-          });
-        setLessons(filtered);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Failed to load lessons:', err);
-        setLoading(false);
-      });
+    import('@/lib/xmlParser').then(({ getLessonsForClass }) => {
+      getLessonsForClass(class_id)
+        .then((data: Lesson[]) => {
+          const filtered = data
+            .filter(l => l.class_id === class_id)
+            .filter(l => {
+              if (!subgroup_id) return true;
+              return l.subgroup_id === '' || l.subgroup_id === subgroup_id;
+            });
+          setLessons(filtered);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Failed to load lessons:', err);
+          setLoading(false);
+        });
+    });
   }, [class_id, subgroup_id]);
 
   const getLessonsForDay = (weekday: Weekday) => {

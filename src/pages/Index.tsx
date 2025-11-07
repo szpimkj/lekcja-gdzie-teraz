@@ -34,16 +34,17 @@ const Index = () => {
     if (!class_id) return;
     
     setLoading(true);
-    fetch(`/data/classes/${class_id}.json`)
-      .then((res) => res.json())
-      .then((data) => {
-        setLessons(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Failed to load lessons:', err);
-        setLoading(false);
-      });
+    import('@/lib/xmlParser').then(({ getLessonsForClass }) => {
+      getLessonsForClass(class_id)
+        .then((data) => {
+          setLessons(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Failed to load lessons:', err);
+          setLoading(false);
+        });
+    });
   }, [class_id]);
 
   // Update current lesson every minute

@@ -33,10 +33,11 @@ export function ClassPicker({ open, onOpenChange }: ClassPickerProps) {
   const t = translations[language];
 
   useEffect(() => {
-    fetch('/data/classes.json')
-      .then((res) => res.json())
-      .then((data) => setClasses(data))
-      .catch(console.error);
+    import('@/lib/xmlParser').then(({ getAllClasses }) => {
+      getAllClasses()
+        .then((data) => setClasses(data))
+        .catch(console.error);
+    });
   }, []);
 
   const handleSave = () => {
