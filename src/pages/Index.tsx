@@ -9,7 +9,7 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { getCurrentOrNextLesson } from '@/lib/scheduleLogic';
 import { Lesson, CurrentLessonInfo } from '@/types/schedule';
-import { Settings, Clock, MapPin, User } from 'lucide-react';
+import { Settings, Clock, MapPin } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Index = () => {
@@ -189,64 +189,17 @@ const Index = () => {
           </div>
         )}
         
-        <div className="flex gap-4 items-start">
-          {/* Time and period on the left */}
-          <div className="flex flex-col gap-1 min-w-[120px] pt-4 items-start">
-            <span className="text-primary font-medium text-sm mb-1">
-              {t.period} {currentInfo.lesson.period}
-            </span>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Clock className="h-4 w-4" />
-              <span className="font-medium">{currentInfo.lesson.start_time} - {currentInfo.lesson.end_time}</span>
-            </div>
-            {currentInfo.minutesRemaining && (
-              <div className="text-sm text-accent font-medium mt-2">
-                {t.remaining} {currentInfo.minutesRemaining} {t.minutesShort}
-              </div>
-            )}
-            {currentInfo.minutesUntil && (
-              <div className="text-sm text-primary font-medium mt-2">
-                {t.in} {currentInfo.minutesUntil} {t.minutesShort}
-              </div>
-            )}
-          </div>
-          
-          {/* Lesson card on the right */}
-          <div className="flex-1">
-            <Card className="p-6 transition-smooth hover:shadow-medium">
-              {currentInfo.status && (
-                <div className={`mb-3 text-sm font-medium ${
-                  currentInfo.status === 'current' 
-                    ? 'text-accent' 
-                    : 'text-primary'
-                }`}>
-                  {currentInfo.status === 'current' ? t.current : t.next}
-                </div>
-              )}
-              
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-2xl font-bold text-foreground mb-1">{currentInfo.lesson.subject}</h3>
-                  {currentInfo.lesson.subgroup_label && (
-                    <p className="text-sm text-muted-foreground">{currentInfo.lesson.subgroup_label}</p>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin className="h-4 w-4" />
-                  <span className="font-medium">{currentInfo.lesson.room}</span>
-                </div>
-                
-                {currentInfo.lesson.teacher && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <User className="h-4 w-4" />
-                    <span>{currentInfo.lesson.teacher}</span>
-                  </div>
-                )}
-              </div>
-            </Card>
-          </div>
-        </div>
+        <LessonCard
+          lesson={currentInfo.lesson}
+          status={currentInfo.status === 'current' ? 'current' : currentInfo.status === 'next' ? 'next' : undefined}
+          minutesInfo={
+            currentInfo.minutesRemaining 
+              ? `${t.remaining} ${currentInfo.minutesRemaining} ${t.minutesShort}`
+              : currentInfo.minutesUntil 
+                ? `${t.in} ${currentInfo.minutesUntil} ${t.minutesShort}`
+                : undefined
+          }
+        />
       </div>
     );
   };
