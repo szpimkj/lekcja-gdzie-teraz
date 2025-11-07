@@ -156,7 +156,9 @@ const ClassSelector = () => {
                   <div className="flex gap-3 md:gap-4 flex-wrap">
                     {groupedClasses[grade].map((classInfo, idx) => {
                       const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim().toUpperCase();
-                      const colorClass = CLASS_COLORS[idx % CLASS_COLORS.length];
+                      // Use letter charCode for consistent colors: 'a'=0, 'b'=1, 'c'=2, etc.
+                      const letterIndex = classLetter.toLowerCase().charCodeAt(0) - 97;
+                      const colorClass = CLASS_COLORS[letterIndex % CLASS_COLORS.length];
                       
                       return (
                         <button
@@ -189,7 +191,9 @@ const ClassSelector = () => {
                   <div className="flex flex-wrap gap-2 justify-center">
                     {groupedClasses[grade].map((classInfo, idx) => {
                       const classLetter = classInfo.class_label.replace(/\d+|[IVX]+/g, '').trim().toUpperCase();
-                      const colorClass = CLASS_COLORS[(gradeIdx + idx) % CLASS_COLORS.length];
+                      // Use letter charCode for consistent colors: 'a'=0, 'b'=1, 'c'=2, etc.
+                      const letterIndex = classLetter.toLowerCase().charCodeAt(0) - 97;
+                      const colorClass = CLASS_COLORS[letterIndex % CLASS_COLORS.length];
                       
                       return (
                         <button
