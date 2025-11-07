@@ -43,19 +43,22 @@ const ClassSelector = () => {
     const handleFullScreenChange = () => {
       const isCurrentlyFullScreen = !!document.fullscreenElement;
       
-      // If trying to exit fullscreen (not from our button)
-      if (!isCurrentlyFullScreen && isFullScreen && !pendingExitFullScreen) {
-        // Re-enter fullscreen and show PIN dialog
-        document.documentElement.requestFullscreen();
+      // If trying to exit fullscreen (not from our button) and not during PIN entry
+      if (!isCurrentlyFullScreen && isFullScreen && !pendingExitFullScreen && !showPinDialog) {
+        // Re-enter fullscreen immediately and show PIN dialog
+        document.documentElement.requestFullscreen().catch(console.error);
         setShowPinDialog(true);
-      } else {
+      } else if (!isCurrentlyFullScreen && isFullScreen && showPinDialog) {
+        // If PIN dialog is shown and fullscreen is lost, re-enter immediately
+        document.documentElement.requestFullscreen().catch(console.error);
+      } else if (pendingExitFullScreen) {
         setIsFullScreen(isCurrentlyFullScreen);
       }
     };
 
     document.addEventListener('fullscreenchange', handleFullScreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
-  }, [isFullScreen, pendingExitFullScreen]);
+  }, [isFullScreen, pendingExitFullScreen, showPinDialog]);
 
   const toggleFullScreen = () => {
     if (!isFullScreen) {
