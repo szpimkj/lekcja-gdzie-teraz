@@ -139,9 +139,9 @@ const ClassSelector = () => {
             <div className="space-y-6 md:space-y-8">
               {sortedGrades.map((grade) => (
                 <div key={grade} className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
-                  <div className="flex items-center gap-2 md:min-w-[120px]">
-                    <span className="text-4xl md:text-5xl font-bold text-primary/20">{grade}</span>
-                    <span className="text-lg font-medium text-muted-foreground">klasa</span>
+                  <div className="flex items-center gap-2 md:min-w-[140px]">
+                    <span className="text-5xl md:text-6xl font-bold text-primary">{grade}</span>
+                    <span className="text-xl md:text-2xl font-semibold text-foreground">klasa</span>
                   </div>
                   
                   <div className="flex gap-3 md:gap-4 flex-wrap">
@@ -173,8 +173,8 @@ const ClassSelector = () => {
               {sortedGrades.map((grade, gradeIdx) => (
                 <div key={grade} className="space-y-3">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-primary/20">{grade}</span>
-                    <span className="text-sm text-muted-foreground">klasa</span>
+                    <span className="text-4xl font-bold text-primary">{grade}</span>
+                    <span className="text-lg font-semibold text-foreground">klasa</span>
                   </div>
                   
                   <div className="flex flex-wrap gap-2">
