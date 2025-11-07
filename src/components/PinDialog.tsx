@@ -46,7 +46,7 @@ export const PinDialog = ({ open, onCorrectPin, onCancel, onWrongPin }: PinDialo
       handleCancel();
     }}>
       <DialogContent 
-        className="sm:max-w-md"
+        className="sm:max-w-md fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999]"
         onEscapeKeyDown={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
