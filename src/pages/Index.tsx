@@ -219,7 +219,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background">
       {/* Header */}
-      <header className="bg-accent border-2 border-accent shadow-soft sticky top-0 z-10">
+      <header className="bg-primary border-2 border-primary shadow-soft sticky top-0 z-10">
         <div className="container max-w-2xl mx-auto px-4 py-4">
           <button
             onClick={() => navigate('/')}
