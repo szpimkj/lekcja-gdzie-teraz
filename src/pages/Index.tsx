@@ -176,25 +176,24 @@ const Index = () => {
                 <Card key={idx} className={`p-4 transition-smooth hover:shadow-medium ${
                   info.status === 'current' ? 'border-accent border-2' : ''
                 }`}>
-                  {/* Big Classroom Number */}
-                  <div className="bg-primary/20 border border-primary rounded-lg p-3 text-center mb-3">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <MapPin className="h-4 w-4 text-primary" />
-                      <span className="text-xs font-medium text-muted-foreground uppercase">Sala</span>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg text-foreground mb-1">
+                        {info.lesson.subject}
+                      </h3>
+                      {info.lesson.subgroup_label && (
+                        <p className="text-xs text-muted-foreground">
+                          {info.lesson.subgroup_label}
+                        </p>
+                      )}
                     </div>
-                    <div className="text-3xl font-black text-primary">
-                      {info.lesson.room}
+                    <div className="bg-primary/20 border-2 border-primary rounded-lg p-2 text-center min-w-[70px]">
+                      <MapPin className="h-4 w-4 text-primary mx-auto mb-1" />
+                      <div className="text-2xl font-black text-primary leading-none">
+                        {info.lesson.room}
+                      </div>
                     </div>
                   </div>
-
-                  <h3 className="font-bold text-base text-foreground mb-1">
-                    {info.lesson.subject}
-                  </h3>
-                  {info.lesson.subgroup_label && (
-                    <p className="text-xs text-muted-foreground">
-                      {info.lesson.subgroup_label}
-                    </p>
-                  )}
                 </Card>
               ))}
             </div>

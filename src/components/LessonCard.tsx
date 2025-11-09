@@ -30,22 +30,19 @@ export function LessonCard({ lesson, status, minutesInfo, className = '' }: Less
       )}
 
       <div className="space-y-4">
-        {/* Big Classroom Tile */}
-        <div className="bg-primary/20 border-2 border-primary rounded-2xl p-6 text-center shadow-medium">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <MapPin className="h-8 w-8 text-primary" />
-            <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Sala</span>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <h3 className="text-3xl font-bold text-foreground mb-2">{lesson.subject}</h3>
+            {lesson.subgroup_label && (
+              <p className="text-sm font-medium text-muted-foreground">{lesson.subgroup_label}</p>
+            )}
           </div>
-          <div className="text-6xl font-black text-primary mb-1">
-            {lesson.room}
+          <div className="bg-primary/20 border-2 border-primary rounded-xl p-4 text-center min-w-[120px]">
+            <MapPin className="h-6 w-6 text-primary mx-auto mb-2" />
+            <div className="text-5xl font-black text-primary leading-none">
+              {lesson.room}
+            </div>
           </div>
-        </div>
-
-        <div>
-          <h3 className="text-3xl font-bold text-foreground mb-2">{lesson.subject}</h3>
-          {lesson.subgroup_label && (
-            <p className="text-sm font-medium text-muted-foreground">{lesson.subgroup_label}</p>
-          )}
         </div>
 
         <div className="grid grid-cols-1 gap-3 text-sm">
