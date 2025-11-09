@@ -30,19 +30,15 @@ export function LessonCard({ lesson, status, minutesInfo, className = '' }: Less
       )}
 
       <div className="space-y-4">
-        {/* Big Classroom Tile */}
-        <div className="bg-primary/20 border-2 border-primary rounded-2xl p-6 text-center shadow-medium">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <MapPin className="h-8 w-8 text-primary" />
-            <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Sala</span>
-          </div>
-          <div className="text-6xl font-black text-primary mb-1">
-            {lesson.room}
-          </div>
-        </div>
-
         <div>
-          <h3 className="text-3xl font-bold text-foreground mb-2">{lesson.subject}</h3>
+          <h3 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-3 flex-wrap">
+            <span>{lesson.subject}</span>
+            <span className="text-muted-foreground font-normal">|</span>
+            <span className="flex items-center gap-2 text-primary">
+              <MapPin className="h-8 w-8" />
+              <span className="text-5xl font-black">{lesson.room}</span>
+            </span>
+          </h3>
           {lesson.subgroup_label && (
             <p className="text-sm font-medium text-muted-foreground">{lesson.subgroup_label}</p>
           )}
