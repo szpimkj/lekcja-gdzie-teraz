@@ -1,4 +1,5 @@
 import { Lesson, ClassInfo, Period, Weekday } from '@/types/schedule';
+import { ROMAN_TO_ARABIC, SCHEDULE_XML_PATH } from './constants';
 
 // Day encoding mapping from binary string to weekday
 const DAY_ENCODING_MAP: Record<string, Weekday> = {
@@ -48,57 +49,40 @@ interface PeriodMap {
   [period: string]: { start: string; end: string };
 }
 
-// Normalize class ID from XML name
+/**
+ * Normalize class ID from XML name
+ * Converts Roman numerals to Arabic and removes spaces
+ */
 function normalizeClassId(className: string): string {
-  // Remove spaces and convert Roman numerals to Arabic
-  const romanToArabic: Record<string, string> = {
-    'I': '1',
-    'II': '2',
-    'III': '3',
-    'IV': '4',
-    'V': '5',
-    'VI': '6',
-    'VII': '7',
-    'VIII': '8',
-  };
-  
   let normalized = className.trim().toLowerCase();
-  
+
   // Handle Roman numerals
-  for (const [roman, arabic] of Object.entries(romanToArabic)) {
+  for (const [roman, arabic] of Object.entries(ROMAN_TO_ARABIC)) {
     normalized = normalized.replace(roman.toLowerCase(), arabic);
   }
-  
+
   // Remove spaces
   normalized = normalized.replace(/\s+/g, '');
-  
+
   return normalized;
 }
 
-// Normalize class label for display
+/**
+ * Normalize class label for display
+ * Converts Roman numerals to Arabic and ensures consistent casing
+ */
 function normalizeClassLabel(className: string): string {
-  const romanToArabic: Record<string, string> = {
-    'I': '1',
-    'II': '2',
-    'III': '3',
-    'IV': '4',
-    'V': '5',
-    'VI': '6',
-    'VII': '7',
-    'VIII': '8',
-  };
-  
   let normalized = className.trim();
-  
+
   // Handle Roman numerals (case insensitive)
-  for (const [roman, arabic] of Object.entries(romanToArabic)) {
+  for (const [roman, arabic] of Object.entries(ROMAN_TO_ARABIC)) {
     const regex = new RegExp(`\\b${roman}\\b`, 'gi');
     normalized = normalized.replace(regex, arabic);
   }
-  
+
   // Convert letter suffixes to lowercase (a, b, c, etc.)
   normalized = normalized.replace(/\b([A-Z])\b/g, (match) => match.toLowerCase());
-  
+
   return normalized;
 }
 
@@ -143,7 +127,7 @@ export async function parseScheduleXML(): Promise<{
   periods: Period[];
 }> {
   try {
-    const response = await fetch('/data/asctt2012.xml');
+    const response = await fetch(SCHEDULE_XML_PATH);
     const xmlText = await response.text();
     
     const parser = new DOMParser();

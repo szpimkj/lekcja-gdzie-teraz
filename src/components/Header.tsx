@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { DateTime } from 'luxon';
 import { Maximize, Minimize } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PinDialog } from '@/components/PinDialog';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { TIMEZONE, CLOCK_UPDATE_INTERVAL } from '@/lib/constants';
 
 interface HeaderProps {
   title: string;
@@ -13,8 +14,8 @@ interface HeaderProps {
   subtitle?: string; // Optional subtitle text
 }
 
-export default function Header({ title, maxWidth = 'max-w-2xl', children, onTitleClick, subtitle }: HeaderProps) {
-  const [currentTime, setCurrentTime] = useState(DateTime.now().setZone('Europe/Warsaw'));
+const Header = memo(({ title, maxWidth = 'max-w-2xl', children, onTitleClick, subtitle }: HeaderProps) => {
+  const [currentTime, setCurrentTime] = useState(DateTime.now().setZone(TIMEZONE));
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showPinDialog, setShowPinDialog] = useState(false);
   const [pendingExitFullScreen, setPendingExitFullScreen] = useState(false);
@@ -22,8 +23,8 @@ export default function Header({ title, maxWidth = 'max-w-2xl', children, onTitl
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentTime(DateTime.now().setZone('Europe/Warsaw'));
-    }, 1000);
+      setCurrentTime(DateTime.now().setZone(TIMEZONE));
+    }, CLOCK_UPDATE_INTERVAL);
     return () => clearInterval(interval);
   }, []);
 
@@ -186,4 +187,8 @@ export default function Header({ title, maxWidth = 'max-w-2xl', children, onTitl
       />
     </>
   );
-}
+});
+
+Header.displayName = 'Header';
+
+export default Header;

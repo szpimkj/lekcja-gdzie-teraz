@@ -1,8 +1,7 @@
 import { DateTime } from 'luxon';
 import { Lesson, Weekday, CurrentLessonInfo } from '@/types/schedule';
-import { translations, TranslationKey } from './i18n';
-
-const TIMEZONE = 'Europe/Warsaw';
+import { translations } from './i18n';
+import { TIMEZONE, WEEKDAYS } from './constants';
 
 export const WEEKDAY_MAP: Record<string, Weekday> = {
   'MON': 'MON',
@@ -20,11 +19,11 @@ export const WEEKDAY_MAP: Record<string, Weekday> = {
 export function getCurrentWeekday(): Weekday | null {
   const now = DateTime.now().setZone(TIMEZONE);
   const dayOfWeek = now.weekday; // 1=Mon, 7=Sun
-  
+
   if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-    return ['MON', 'TUE', 'WED', 'THU', 'FRI'][dayOfWeek - 1] as Weekday;
+    return WEEKDAYS[dayOfWeek - 1];
   }
-  
+
   return null; // Weekend
 }
 
@@ -43,17 +42,14 @@ export function isTimeBetween(now: DateTime, startTime: string, endTime: string)
   return now >= startDT && now < endDT;
 }
 
-export function getMinutesUntil(now: DateTime, timeStr: string): number {
+/**
+ * Calculate minutes between now and a target time
+ * Used for both "minutes until" (start time) and "minutes remaining" (end time)
+ */
+export function getMinutesDifference(now: DateTime, timeStr: string): number {
   const time = parseTime(timeStr);
   const target = now.set({ hour: time.hour, minute: time.minute, second: 0 });
-  
-  return Math.floor(target.diff(now, 'minutes').minutes);
-}
 
-export function getMinutesRemaining(now: DateTime, timeStr: string): number {
-  const time = parseTime(timeStr);
-  const target = now.set({ hour: time.hour, minute: time.minute, second: 0 });
-  
   return Math.floor(target.diff(now, 'minutes').minutes);
 }
 
@@ -93,7 +89,7 @@ export function getCurrentOrNextLesson(
   // Check if currently in a lesson
   for (const lesson of todayLessons) {
     if (isTimeBetween(now, lesson.start_time, lesson.end_time)) {
-      const minutesRemaining = getMinutesRemaining(now, lesson.end_time);
+      const minutesRemaining = getMinutesDifference(now, lesson.end_time);
       
       // If no subgroup selected and multiple groups for this period, return all
       if (!subgroup_id) {
@@ -131,7 +127,7 @@ export function getCurrentOrNextLesson(
   
   if (upcomingLessons.length > 0) {
     const nextLesson = upcomingLessons[0];
-    const minutesUntil = getMinutesUntil(now, nextLesson.start_time);
+    const minutesUntil = getMinutesDifference(now, nextLesson.start_time);
     
     // Check for multiple groups at same time
     if (!subgroup_id) {
@@ -204,9 +200,8 @@ function filterLessons(
 }
 
 function getNextWeekday(current: Weekday): Weekday {
-  const weekdays: Weekday[] = ['MON', 'TUE', 'WED', 'THU', 'FRI'];
-  const index = weekdays.indexOf(current);
-  return weekdays[(index + 1) % 5];
+  const index = WEEKDAYS.indexOf(current);
+  return WEEKDAYS[(index + 1) % 5];
 }
 
 function getDaysUntilWeekday(current: Weekday, target: Weekday): number {
