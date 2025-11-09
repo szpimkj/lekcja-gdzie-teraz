@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { BottomNav } from '@/components/BottomNav';
-import { ClassInfoFrame } from '@/components/ClassInfoFrame';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { getCurrentWeekday } from '@/lib/scheduleLogic';
@@ -71,10 +70,10 @@ const TodayPlan = () => {
       {/* Header */}
       <header className="bg-primary border-2 border-primary shadow-soft sticky top-0 z-10">
         <div className="container max-w-2xl mx-auto px-4 py-3">
-          <ClassInfoFrame onClick={() => navigate('/')}>
-            <h1 className="text-lg font-bold text-accent-foreground">{t.showDayPlan}</h1>
-            <p className="text-sm text-accent-foreground/80">{class_label}</p>
-          </ClassInfoFrame>
+          <button onClick={() => navigate('/')} className="w-full text-center hover:opacity-90 transition-smooth cursor-pointer">
+            <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground">{t.showDayPlan}</h1>
+            <p className="text-sm text-primary-foreground/80 mt-1">{class_label}</p>
+          </button>
         </div>
       </header>
 
