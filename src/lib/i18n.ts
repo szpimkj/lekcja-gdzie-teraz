@@ -34,6 +34,15 @@ export const translations = {
     friday: 'Piątek',
     noLessonsToday: 'Dzisiaj brak zajęć',
     period: 'Lekcja',
+    // New translations for hardcoded text
+    breakTime: 'Uff! Masz teraz przerwę',
+    nextLessonStartsIn: 'Następne zajęcia zaczynają się za:',
+    currentLesson: 'Aktualne zajęcia:',
+    timeRemainingUntilEnd: 'pozostało do końca zajęć',
+    whereHasLessonClass: 'Gdzie ma lekcje klasa',
+    days: 'd',
+    hours: 'h',
+    minutes: 'min',
   },
   en: {
     mainButton: 'Where is my lesson?',
@@ -70,6 +79,15 @@ export const translations = {
     friday: 'Friday',
     noLessonsToday: 'No lessons today',
     period: 'Period',
+    // New translations for hardcoded text
+    breakTime: 'Phew! You have a break now',
+    nextLessonStartsIn: 'Next lesson starts in:',
+    currentLesson: 'Current lesson:',
+    timeRemainingUntilEnd: 'remaining until the end of class',
+    whereHasLessonClass: 'Where does class',
+    days: 'd',
+    hours: 'h',
+    minutes: 'min',
   },
 };
 

@@ -1,35 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card } from '@/components/ui/card';
 import { LessonCard } from '@/components/LessonCard';
 import { BottomNav } from '@/components/BottomNav';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { getCurrentOrNextLesson } from '@/lib/scheduleLogic';
+import { formatTimeUntil } from '@/lib/utils';
+import { LESSON_UPDATE_INTERVAL, AUTO_REDIRECT_TIMEOUT } from '@/lib/constants';
 import { Lesson, CurrentLessonInfo } from '@/types/schedule';
-import { Clock, MapPin } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Header from '@/components/Header';
-
-// Helper function to format time with days, hours, and minutes
-const formatTimeUntil = (minutes: number): string => {
-  if (minutes >= 1440) {
-    // 24+ hours: show days, hours, and minutes
-    const days = Math.floor(minutes / 1440);
-    const remaining = minutes % 1440;
-    const hours = Math.floor(remaining / 60);
-    const mins = remaining % 60;
-    return `${days}d ${hours}h ${mins}min`;
-  } else if (minutes >= 60) {
-    // 1-23 hours: show hours and minutes
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours}h ${mins}min`;
-  } else {
-    // Less than 1 hour: show just minutes
-    return `${minutes} min`;
-  }
-};
+import { BreakTimeDisplay, CurrentLessonDisplay } from '@/components/lesson/TimeStatusDisplay';
+import { LessonTimeInfo } from '@/components/lesson/LessonTimeInfo';
+import { MultiLessonCard } from '@/components/lesson/MultiLessonCard';
 
 const Index = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
@@ -50,7 +33,7 @@ const Index = () => {
   // Load lessons for selected class
   useEffect(() => {
     if (!class_id) return;
-    
+
     setLoading(true);
     import('@/lib/xmlParser').then(({ getLessonsForClass }) => {
       getLessonsForClass(class_id)
@@ -75,29 +58,19 @@ const Index = () => {
     };
 
     updateCurrent();
-    const interval = setInterval(updateCurrent, 60000); // Every minute
+    const interval = setInterval(updateCurrent, LESSON_UPDATE_INTERVAL);
 
     return () => clearInterval(interval);
   }, [lessons, class_id, subgroup_id, language]);
 
-  // Auto-redirect back to main page after 10 seconds
+  // Auto-redirect back to main page after timeout
   useEffect(() => {
     const redirectTimer = setTimeout(() => {
       navigate('/');
-    }, 10000);
+    }, AUTO_REDIRECT_TIMEOUT);
 
     return () => clearTimeout(redirectTimer);
   }, [navigate]);
-
-  const handleMainButton = () => {
-    if (!class_id) {
-      setShowClassPicker(true);
-      return;
-    }
-
-    const info = getCurrentOrNextLesson(lessons, class_id, subgroup_id, language);
-    setCurrentInfo(info);
-  };
 
   const renderCurrentInfo = () => {
     if (!currentInfo) {
@@ -118,94 +91,31 @@ const Index = () => {
 
       return (
         <div className="space-y-4">
-          {isBreakTime && (
-            <div className="text-center mb-8 p-6 bg-primary/10 rounded-2xl border-2 border-primary/20">
-              <div className="text-sm font-medium text-muted-foreground mb-2">
-                Uff! Masz teraz przerwę
-              </div>
-              <div className="text-lg font-semibold text-foreground mb-3">
-                Następne zajęcia zaczynają się za:
-              </div>
-              {firstInfo.minutesUntil && (
-                <div className="text-5xl font-bold text-primary">
-                  {formatTimeUntil(firstInfo.minutesUntil)}
-                </div>
-              )}
-            </div>
+          {isBreakTime && firstInfo.minutesUntil && (
+            <BreakTimeDisplay minutesUntil={firstInfo.minutesUntil} />
           )}
-          {isCurrentClass && (
-            <div className="text-center mb-8 p-6 bg-accent/10 rounded-2xl border-2 border-accent/20">
-              <div className="text-lg font-semibold text-foreground mb-3">
-                Aktualne zajęcia:
-              </div>
-              {firstInfo.minutesRemaining && (
-                <div>
-                  <div className="text-5xl font-bold text-accent mb-1">
-                    {formatTimeUntil(firstInfo.minutesRemaining)}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    pozostało do końca zajęć
-                  </div>
-                </div>
-              )}
-            </div>
+          {isCurrentClass && firstInfo.minutesRemaining && (
+            <CurrentLessonDisplay minutesRemaining={firstInfo.minutesRemaining} />
           )}
-          
+
           <div className="flex gap-4 items-start">
             {/* Time and period on the left */}
-            <div className="flex flex-col gap-2 min-w-[140px] pt-2">
-              <div className="bg-primary/10 rounded-lg p-3 border border-primary/20">
-                <span className="text-primary font-bold text-lg block mb-2">
-                  {t.period} {firstInfo.lesson.period}
-                </span>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground mb-3">
-                  <Clock className="h-4 w-4" />
-                  <span className="font-medium">{firstInfo.lesson.start_time} - {firstInfo.lesson.end_time}</span>
-                </div>
-                {firstInfo.minutesRemaining && (
-                  <div className="text-center p-2 bg-accent/20 rounded-lg border border-accent/30">
-                    <div className="text-xs text-muted-foreground mb-1">{t.remaining}</div>
-                    <div className="text-2xl font-bold text-accent">
-                      {formatTimeUntil(firstInfo.minutesRemaining)}
-                    </div>
-                  </div>
-                )}
-                {firstInfo.minutesUntil && (
-                  <div className="text-center p-2 bg-primary/20 rounded-lg border border-primary/30">
-                    <div className="text-xs text-muted-foreground mb-1">{t.in}</div>
-                    <div className="text-2xl font-bold text-primary">
-                      {formatTimeUntil(firstInfo.minutesUntil)}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-            
+            <LessonTimeInfo
+              period={firstInfo.lesson.period}
+              startTime={firstInfo.lesson.start_time}
+              endTime={firstInfo.lesson.end_time}
+              minutesRemaining={firstInfo.minutesRemaining}
+              minutesUntil={firstInfo.minutesUntil}
+            />
+
             {/* Lessons as tiles on the right */}
             <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {currentInfo.map((info, idx) => (
-                <Card key={idx} className={`p-4 transition-smooth hover:shadow-medium ${
-                  info.status === 'current' ? 'border-accent border-2' : ''
-                }`}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <h3 className="font-bold text-lg text-foreground mb-1">
-                        {info.lesson.subject}
-                      </h3>
-                      {info.lesson.subgroup_label && (
-                        <p className="text-xs text-muted-foreground">
-                          {info.lesson.subgroup_label}
-                        </p>
-                      )}
-                    </div>
-                    <div className="bg-primary/20 border-2 border-primary rounded-lg p-2 text-center min-w-[70px]">
-                      <MapPin className="h-4 w-4 text-primary mx-auto mb-1" />
-                      <div className="text-2xl font-black text-primary leading-none">
-                        {info.lesson.room}
-                      </div>
-                    </div>
-                  </div>
-                </Card>
+                <MultiLessonCard
+                  key={idx}
+                  lesson={info.lesson}
+                  status={info.status}
+                />
               ))}
             </div>
           </div>
@@ -226,47 +136,21 @@ const Index = () => {
 
     return (
       <div className="space-y-4">
-        {isBreakTime && (
-          <div className="text-center mb-8 p-6 bg-primary/10 rounded-2xl border-2 border-primary/20">
-            <div className="text-sm font-medium text-muted-foreground mb-2">
-              Uff! Masz teraz przerwę
-            </div>
-            <div className="text-lg font-semibold text-foreground mb-3">
-              Następne zajęcia zaczynają się za:
-            </div>
-            {currentInfo.minutesUntil && (
-              <div className="text-5xl font-bold text-primary">
-                {formatTimeUntil(currentInfo.minutesUntil)}
-              </div>
-            )}
-          </div>
+        {isBreakTime && currentInfo.minutesUntil && (
+          <BreakTimeDisplay minutesUntil={currentInfo.minutesUntil} />
         )}
-        {isCurrentClass && (
-          <div className="text-center mb-8 p-6 bg-accent/10 rounded-2xl border-2 border-accent/20">
-            <div className="text-lg font-semibold text-foreground mb-3">
-              Aktualne zajęcia:
-            </div>
-            {currentInfo.minutesRemaining && (
-              <div>
-                <div className="text-5xl font-bold text-accent mb-1">
-                  {formatTimeUntil(currentInfo.minutesRemaining)}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  pozostało do końca zajęć
-                </div>
-              </div>
-            )}
-          </div>
+        {isCurrentClass && currentInfo.minutesRemaining && (
+          <CurrentLessonDisplay minutesRemaining={currentInfo.minutesRemaining} />
         )}
-        
+
         <LessonCard
           lesson={currentInfo.lesson}
           status={currentInfo.status === 'current' ? 'current' : currentInfo.status === 'next' ? 'next' : undefined}
           minutesInfo={
             currentInfo.minutesRemaining
-              ? `${t.remaining} ${formatTimeUntil(currentInfo.minutesRemaining)}`
+              ? `${t.remaining} ${formatTimeUntil(currentInfo.minutesRemaining, { days: t.days, hours: t.hours, minutes: t.minutes })}`
               : currentInfo.minutesUntil
-                ? `${t.in} ${formatTimeUntil(currentInfo.minutesUntil)}`
+                ? `${t.in} ${formatTimeUntil(currentInfo.minutesUntil, { days: t.days, hours: t.hours, minutes: t.minutes })}`
                 : undefined
           }
         />
@@ -277,9 +161,9 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background">
       <Header
-        title={`Gdzie ma lekcje klasa ${class_label || t.noClass}?`}
+        title={`${t.whereHasLessonClass} ${class_label || t.noClass}?`}
         onTitleClick={() => navigate('/')}
-        subtitle="Zmień klasę"
+        subtitle={t.changeClass}
       />
 
       {/* Main Content */}

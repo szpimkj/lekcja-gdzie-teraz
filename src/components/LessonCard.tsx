@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Lesson } from '@/types/schedule';
 import { Card } from '@/components/ui/card';
 import { Clock, MapPin, User } from 'lucide-react';
@@ -11,7 +12,7 @@ interface LessonCardProps {
   className?: string;
 }
 
-export function LessonCard({ lesson, status, minutesInfo, className = '' }: LessonCardProps) {
+export const LessonCard = memo(({ lesson, status, minutesInfo, className = '' }: LessonCardProps) => {
   const language = useSettingsStore((state) => state.language);
   const t = translations[language];
 
@@ -69,4 +70,6 @@ export function LessonCard({ lesson, status, minutesInfo, className = '' }: Less
       </div>
     </Card>
   );
-}
+});
+
+LessonCard.displayName = 'LessonCard';

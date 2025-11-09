@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { SETTINGS_STORAGE_KEY } from '@/lib/constants';
 
 export type Language = 'pl' | 'en';
 export type Theme = 'system' | 'light' | 'dark';
@@ -45,7 +46,7 @@ export const useSettingsStore = create<SettingsState>()(
       }),
     }),
     {
-      name: 'timetable-settings',
+      name: SETTINGS_STORAGE_KEY,
     }
   )
 );
