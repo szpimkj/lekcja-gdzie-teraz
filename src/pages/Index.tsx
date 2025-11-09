@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { LessonCard } from '@/components/LessonCard';
-import { ClassPicker } from '@/components/ClassPicker';
 import { BottomNav } from '@/components/BottomNav';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { getCurrentOrNextLesson } from '@/lib/scheduleLogic';
 import { Lesson, CurrentLessonInfo } from '@/types/schedule';
-import { Settings, Clock, MapPin } from 'lucide-react';
+import { Clock, MapPin } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 // Helper function to format time with days, hours, and minutes
@@ -35,7 +33,6 @@ const formatTimeUntil = (minutes: number): string => {
 const Index = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentInfo, setCurrentInfo] = useState<CurrentLessonInfo | CurrentLessonInfo[] | null>(null);
-  const [showClassPicker, setShowClassPicker] = useState(false);
   const [loading, setLoading] = useState(false);
   
   const { class_id, class_label, subgroup_id, subgroup_label, language } = useSettingsStore();
@@ -279,16 +276,16 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background">
       {/* Header */}
-      <header className="bg-background/80 backdrop-blur-sm border-b border-border shadow-soft sticky top-0 z-10">
+      <header className="bg-primary border-2 border-primary shadow-soft sticky top-0 z-10">
         <div className="container max-w-2xl mx-auto px-4 py-3">
           <button
             onClick={() => navigate('/')}
-            className="w-full text-center bg-card hover:bg-muted/50 rounded-lg px-4 py-3 transition-smooth border border-border shadow-soft"
+            className="w-full text-center bg-orange rounded-lg px-4 py-3 transition-smooth border-2 border-orange shadow-soft hover:opacity-90"
           >
-            <h1 className="text-base font-bold text-foreground">
-              {class_label || t.noClass}
+            <h1 className="text-base font-bold text-orange-foreground">
+              Gdzie ma lekcje klas {class_label || t.noClass}
             </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-xs text-orange-foreground/80 mt-0.5">
               Zmień klasę
             </p>
           </button>
@@ -297,18 +294,6 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container max-w-2xl mx-auto px-4 py-8 pb-28 space-y-6">
-        {/* Big Main Button */}
-        <div className="text-center space-y-6">
-          <Button
-            onClick={handleMainButton}
-            disabled={loading}
-            size="lg"
-            className="w-full h-24 text-xl font-bold gradient-hero hover:opacity-90 transition-smooth shadow-large"
-          >
-            {t.mainButton}
-          </Button>
-        </div>
-
         {/* Current/Next Lesson Display */}
         {currentInfo && (
           <div className="mt-8">
@@ -318,7 +303,6 @@ const Index = () => {
       </main>
 
       <BottomNav />
-      <ClassPicker open={showClassPicker} onOpenChange={setShowClassPicker} />
     </div>
   );
 };
