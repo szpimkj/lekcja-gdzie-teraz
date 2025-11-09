@@ -9,13 +9,18 @@ import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PinDialog } from '@/components/PinDialog';
 
-// Soft pastel colors for class buttons - minimalistic and child-friendly
+// Minimalistic cheerful colors for class buttons - teaching color harmony
 const CLASS_COLORS = [
-  'bg-primary text-primary-foreground',
-  'bg-accent text-accent-foreground',
-  'bg-info text-info-foreground',
-  'bg-success text-success-foreground',
-  'bg-secondary text-secondary-foreground',
+  'bg-accent text-accent-foreground',        // A - Coral (warm)
+  'bg-primary text-primary-foreground',      // B - Sky Blue (cool)
+  'bg-mint text-mint-foreground',            // C - Mint (fresh)
+  'bg-info text-info-foreground',            // D - Sunshine (bright)
+  'bg-lavender text-lavender-foreground',    // E - Lavender (creative)
+  'bg-secondary text-secondary-foreground',  // F - Peach (gentle)
+  'bg-success text-success-foreground',      // G - Sage Green (natural)
+  'bg-ocean text-ocean-foreground',          // H - Ocean (deep)
+  'bg-rose text-rose-foreground',            // I - Rose (playful)
+  'bg-lime text-lime-foreground',            // J - Lime (energetic)
 ];
 
 const ClassSelector = () => {
@@ -207,17 +212,17 @@ const ClassSelector = () => {
   return (
     <div className="min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background">
       {/* Compact Banner Header */}
-      <header className="bg-accent border-2 border-accent shadow-soft">
+      <header className="bg-primary border-2 border-primary shadow-soft">
         <div className="px-4 md:px-6 py-3 flex items-center justify-between">
           {/* Time/Date - compact on the left */}
-          <div className="hidden md:flex flex-col items-start text-xs text-accent-foreground/80">
-            <div className="font-semibold text-accent-foreground">{formattedTime}</div>
+          <div className="hidden md:flex flex-col items-start text-xs text-primary-foreground/80">
+            <div className="font-semibold text-primary-foreground">{formattedTime}</div>
             <div>{weekdayName}, {formattedDate}</div>
           </div>
-          
+
           {/* Main Title - centered and prominent */}
           <div className="flex-1 text-center">
-            <h1 className="text-2xl md:text-3xl font-bold text-accent-foreground">
+            <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground">
               Wybierz swoją klasę
             </h1>
           </div>
@@ -250,7 +255,7 @@ const ClassSelector = () => {
         </div>
         
         {/* Mobile time/date - below title */}
-        <div className="md:hidden px-4 pb-2 text-center text-xs text-accent-foreground/80">
+        <div className="md:hidden px-4 pb-2 text-center text-xs text-primary-foreground/80">
           <span className="font-semibold">{formattedTime}</span>
           <span className="mx-2">•</span>
           <span>{weekdayName}, {formattedDate}</span>

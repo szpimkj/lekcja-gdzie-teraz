@@ -73,13 +73,13 @@ const WeekPlan = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10 shadow-soft">
+      <header className="bg-primary border-2 border-primary shadow-soft sticky top-0 z-10">
         <div className="container max-w-4xl mx-auto px-4 py-4">
           <div className="text-center">
-            <h1 className="text-lg font-bold text-foreground">{t.showWeekPlan}</h1>
-            <p className="text-sm text-muted-foreground">{class_label}</p>
+            <h1 className="text-lg font-bold text-primary-foreground">{t.showWeekPlan}</h1>
+            <p className="text-sm text-primary-foreground/80">{class_label}</p>
           </div>
         </div>
       </header>
