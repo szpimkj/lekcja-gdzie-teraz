@@ -176,19 +176,24 @@ const Index = () => {
                 <Card key={idx} className={`p-4 transition-smooth hover:shadow-medium ${
                   info.status === 'current' ? 'border-accent border-2' : ''
                 }`}>
-                  <h3 className="font-bold text-lg text-foreground mb-2 flex items-center gap-2 flex-wrap">
-                    <span>{info.lesson.subject}</span>
-                    <span className="text-muted-foreground font-normal">|</span>
-                    <span className="flex items-center gap-1 text-primary">
-                      <MapPin className="h-5 w-5" />
-                      <span className="text-2xl font-black">{info.lesson.room}</span>
-                    </span>
-                  </h3>
-                  {info.lesson.subgroup_label && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {info.lesson.subgroup_label}
-                    </p>
-                  )}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg text-foreground mb-1">
+                        {info.lesson.subject}
+                      </h3>
+                      {info.lesson.subgroup_label && (
+                        <p className="text-xs text-muted-foreground">
+                          {info.lesson.subgroup_label}
+                        </p>
+                      )}
+                    </div>
+                    <div className="bg-primary/20 border-2 border-primary rounded-lg p-2 text-center min-w-[70px]">
+                      <MapPin className="h-4 w-4 text-primary mx-auto mb-1" />
+                      <div className="text-2xl font-black text-primary leading-none">
+                        {info.lesson.room}
+                      </div>
+                    </div>
+                  </div>
                 </Card>
               ))}
             </div>
