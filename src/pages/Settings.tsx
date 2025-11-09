@@ -16,11 +16,17 @@ import { ClassInfoFrame } from '@/components/ClassInfoFrame';
 import { BottomNav } from '@/components/BottomNav';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
+import { Maximize, Minimize } from 'lucide-react';
+import { PinDialog } from '@/components/PinDialog';
+import { useEffect } from 'react';
 
 const Settings = () => {
   const [showClassPicker, setShowClassPicker] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [showPinDialog, setShowPinDialog] = useState(false);
+  const [pendingExitFullScreen, setPendingExitFullScreen] = useState(false);
   const navigate = useNavigate();
-  
+
   const {
     class_label,
     subgroup_label,
@@ -31,15 +37,85 @@ const Settings = () => {
     use24Hour,
     setUse24Hour,
   } = useSettingsStore();
-  
+
   const t = translations[language];
+
+  // Fullscreen event listener
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      const isCurrentlyFullScreen = !!document.fullscreenElement;
+
+      if (!isCurrentlyFullScreen && isFullScreen) {
+        if (pendingExitFullScreen) {
+          setIsFullScreen(false);
+          setPendingExitFullScreen(false);
+        } else {
+          if (!showPinDialog) {
+            setShowPinDialog(true);
+          }
+          document.documentElement.requestFullscreen().catch((err) => {
+            console.error('Failed to re-enter fullscreen:', err);
+          });
+        }
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
+  }, [isFullScreen, pendingExitFullScreen, showPinDialog]);
+
+  const toggleFullScreen = () => {
+    if (!isFullScreen) {
+      document.documentElement.requestFullscreen();
+      setIsFullScreen(true);
+    } else {
+      setShowPinDialog(true);
+    }
+  };
+
+  const handleCorrectPin = () => {
+    setPendingExitFullScreen(true);
+    setShowPinDialog(false);
+
+    document.exitFullscreen().catch((err) => {
+      console.error('Failed to exit fullscreen:', err);
+      setPendingExitFullScreen(false);
+    });
+  };
+
+  const handlePinCancel = () => {
+    setShowPinDialog(false);
+
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(console.error);
+    }
+  };
+
+  const handleWrongPin = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(console.error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-primary border-2 border-primary shadow-soft sticky top-0 z-10">
         <div className="container max-w-2xl mx-auto px-4 py-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground text-center">{t.settings}</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="flex-1 text-2xl md:text-3xl font-bold text-primary-foreground text-center">{t.settings}</h1>
+            <button
+              onClick={toggleFullScreen}
+              className="opacity-20 hover:opacity-60 transition-opacity"
+              title={isFullScreen ? "Wyjdź z trybu pełnoekranowego" : "Tryb pełnoekranowy"}
+            >
+              {isFullScreen ? (
+                <Minimize className="h-3 w-3 text-primary-foreground" />
+              ) : (
+                <Maximize className="h-3 w-3 text-primary-foreground" />
+              )}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -124,6 +200,12 @@ const Settings = () => {
 
       <BottomNav />
       <ClassPicker open={showClassPicker} onOpenChange={setShowClassPicker} />
+      <PinDialog
+        open={showPinDialog}
+        onCorrectPin={handleCorrectPin}
+        onCancel={handlePinCancel}
+        onWrongPin={handleWrongPin}
+      />
     </div>
   );
 };
