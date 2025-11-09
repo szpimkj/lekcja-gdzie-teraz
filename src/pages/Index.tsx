@@ -120,36 +120,54 @@ const Index = () => {
       return (
         <div className="space-y-4">
           {isBreakTime && (
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-primary">
-                {firstInfo.minutesUntil
-                  ? `Uff! Masz teraz przerwę, następne zajęcia zaczynają się za ${formatTimeUntil(firstInfo.minutesUntil)}`
-                  : 'Uff! Masz teraz przerwę. Następne zajęcia to:'
-                }
-              </h2>
+            <div className="text-center mb-8 p-6 bg-primary/10 rounded-2xl border-2 border-primary/20">
+              <div className="text-sm font-medium text-muted-foreground mb-2">
+                Uff! Masz teraz przerwę
+              </div>
+              {firstInfo.minutesUntil && (
+                <div className="mb-3">
+                  <div className="text-5xl font-bold text-primary mb-1">
+                    {formatTimeUntil(firstInfo.minutesUntil)}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    do następnych zajęć
+                  </div>
+                </div>
+              )}
+              <div className="text-lg font-semibold text-foreground">
+                Następne zajęcia to:
+              </div>
             </div>
           )}
           
           <div className="flex gap-4 items-start">
             {/* Time and period on the left */}
-            <div className="flex flex-col gap-1 min-w-[120px] pt-4">
-              <span className="text-primary font-medium text-sm mb-1">
-                {t.period} {firstInfo.lesson.period}
-              </span>
-              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Clock className="h-4 w-4" />
-                <span className="font-medium">{firstInfo.lesson.start_time} - {firstInfo.lesson.end_time}</span>
+            <div className="flex flex-col gap-2 min-w-[140px] pt-2">
+              <div className="bg-primary/10 rounded-lg p-3 border border-primary/20">
+                <span className="text-primary font-bold text-lg block mb-2">
+                  {t.period} {firstInfo.lesson.period}
+                </span>
+                <div className="flex items-center gap-1 text-sm text-muted-foreground mb-3">
+                  <Clock className="h-4 w-4" />
+                  <span className="font-medium">{firstInfo.lesson.start_time} - {firstInfo.lesson.end_time}</span>
+                </div>
+                {firstInfo.minutesRemaining && (
+                  <div className="text-center p-2 bg-accent/20 rounded-lg border border-accent/30">
+                    <div className="text-xs text-muted-foreground mb-1">{t.remaining}</div>
+                    <div className="text-2xl font-bold text-accent">
+                      {formatTimeUntil(firstInfo.minutesRemaining)}
+                    </div>
+                  </div>
+                )}
+                {firstInfo.minutesUntil && (
+                  <div className="text-center p-2 bg-primary/20 rounded-lg border border-primary/30">
+                    <div className="text-xs text-muted-foreground mb-1">{t.in}</div>
+                    <div className="text-2xl font-bold text-primary">
+                      {formatTimeUntil(firstInfo.minutesUntil)}
+                    </div>
+                  </div>
+                )}
               </div>
-              {firstInfo.minutesRemaining && (
-                <div className="text-sm text-accent font-medium mt-2">
-                  {t.remaining} {firstInfo.minutesRemaining} {t.minutesShort}
-                </div>
-              )}
-              {firstInfo.minutesUntil && (
-                <div className="text-sm text-primary font-medium mt-2">
-                  {t.in} {firstInfo.minutesUntil} {t.minutesShort}
-                </div>
-              )}
             </div>
             
             {/* Lessons as tiles on the right */}
@@ -158,18 +176,25 @@ const Index = () => {
                 <Card key={idx} className={`p-4 transition-smooth hover:shadow-medium ${
                   info.status === 'current' ? 'border-accent border-2' : ''
                 }`}>
-                  <h3 className="font-bold text-base text-foreground mb-2">
+                  {/* Big Classroom Number */}
+                  <div className="bg-primary/20 border border-primary rounded-lg p-3 text-center mb-3">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      <span className="text-xs font-medium text-muted-foreground uppercase">Sala</span>
+                    </div>
+                    <div className="text-3xl font-black text-primary">
+                      {info.lesson.room}
+                    </div>
+                  </div>
+
+                  <h3 className="font-bold text-base text-foreground mb-1">
                     {info.lesson.subject}
                   </h3>
                   {info.lesson.subgroup_label && (
-                    <p className="text-xs text-muted-foreground mb-2">
+                    <p className="text-xs text-muted-foreground">
                       {info.lesson.subgroup_label}
                     </p>
                   )}
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <MapPin className="h-3 w-3" />
-                    <span>{info.lesson.room}</span>
-                  </div>
                 </Card>
               ))}
             </div>
@@ -191,13 +216,23 @@ const Index = () => {
     return (
       <div className="space-y-4">
         {isBreakTime && (
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-primary">
-              {currentInfo.minutesUntil
-                ? `Uff! Masz teraz przerwę, następne zajęcia zaczynają się za ${formatTimeUntil(currentInfo.minutesUntil)}`
-                : 'Uff! Masz teraz przerwę. Następne zajęcia to:'
-              }
-            </h2>
+          <div className="text-center mb-8 p-6 bg-primary/10 rounded-2xl border-2 border-primary/20">
+            <div className="text-sm font-medium text-muted-foreground mb-2">
+              Uff! Masz teraz przerwę
+            </div>
+            {currentInfo.minutesUntil && (
+              <div className="mb-3">
+                <div className="text-5xl font-bold text-primary mb-1">
+                  {formatTimeUntil(currentInfo.minutesUntil)}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  do następnych zajęć
+                </div>
+              </div>
+            )}
+            <div className="text-lg font-semibold text-foreground">
+              Następne zajęcia to:
+            </div>
           </div>
         )}
         
@@ -205,10 +240,10 @@ const Index = () => {
           lesson={currentInfo.lesson}
           status={currentInfo.status === 'current' ? 'current' : currentInfo.status === 'next' ? 'next' : undefined}
           minutesInfo={
-            currentInfo.minutesRemaining 
-              ? `${t.remaining} ${currentInfo.minutesRemaining} ${t.minutesShort}`
-              : currentInfo.minutesUntil 
-                ? `${t.in} ${currentInfo.minutesUntil} ${t.minutesShort}`
+            currentInfo.minutesRemaining
+              ? `${t.remaining} ${formatTimeUntil(currentInfo.minutesRemaining)}`
+              : currentInfo.minutesUntil
+                ? `${t.in} ${formatTimeUntil(currentInfo.minutesUntil)}`
                 : undefined
           }
         />
@@ -219,13 +254,13 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background">
       {/* Header */}
-      <header className="bg-primary border-2 border-primary shadow-soft sticky top-0 z-10">
-        <div className="container max-w-2xl mx-auto px-4 py-4">
+      <header className="bg-background/80 backdrop-blur-sm border-b border-border shadow-soft sticky top-0 z-10">
+        <div className="container max-w-2xl mx-auto px-4 py-3">
           <button
             onClick={() => navigate('/')}
-            className="w-full text-center bg-secondary/60 hover:bg-secondary/80 rounded-lg px-4 py-2 transition-smooth border border-border"
+            className="w-full text-center bg-card hover:bg-muted/50 rounded-lg px-4 py-3 transition-smooth border border-border shadow-soft"
           >
-            <h1 className="text-lg font-bold text-foreground">
+            <h1 className="text-base font-bold text-foreground">
               {class_label || t.noClass}
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5">
