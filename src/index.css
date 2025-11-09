@@ -47,7 +47,7 @@ All colors MUST be HSL.
 
     /* Lavender - creative, imagination */
     --lavender: 265 60% 70%;
-    --lavender-foreground: 265 50% 25%;
+    --lavender-foreground: 0 0% 100%;
 
     /* Ocean - deep, stable */
     --ocean: 200 80% 55%;
