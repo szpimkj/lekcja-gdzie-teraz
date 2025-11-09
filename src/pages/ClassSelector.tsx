@@ -47,7 +47,7 @@ const ClassSelector = () => {
   useEffect(() => {
     const handleFullScreenChange = () => {
       const isCurrentlyFullScreen = !!document.fullscreenElement;
-      
+
       // If we're in fullscreen mode state but browser exited fullscreen
       if (!isCurrentlyFullScreen && isFullScreen) {
         if (pendingExitFullScreen) {
@@ -55,14 +55,11 @@ const ClassSelector = () => {
           setIsFullScreen(false);
           setPendingExitFullScreen(false);
         } else {
-          // Unauthorized exit attempt - show PIN dialog and re-enter
+          // Unauthorized exit attempt - show PIN dialog
+          // Don't re-enter fullscreen here; let the useEffect below handle it
           if (!showPinDialog) {
             setShowPinDialog(true);
           }
-          // Re-enter fullscreen immediately without animation frame delay
-          document.documentElement.requestFullscreen().catch((err) => {
-            console.error('Failed to re-enter fullscreen:', err);
-          });
         }
       }
     };
@@ -70,6 +67,18 @@ const ClassSelector = () => {
     document.addEventListener('fullscreenchange', handleFullScreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
   }, [isFullScreen, pendingExitFullScreen, showPinDialog]);
+
+  // Re-enter fullscreen after PIN dialog is shown
+  useEffect(() => {
+    if (showPinDialog && isFullScreen && !document.fullscreenElement) {
+      // Use requestAnimationFrame to ensure dialog is rendered before re-entering fullscreen
+      requestAnimationFrame(() => {
+        document.documentElement.requestFullscreen().catch((err) => {
+          console.error('Failed to re-enter fullscreen:', err);
+        });
+      });
+    }
+  }, [showPinDialog, isFullScreen]);
 
   const toggleFullScreen = () => {
     if (!isFullScreen) {
