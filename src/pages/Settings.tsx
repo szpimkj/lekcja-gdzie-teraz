@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ClassPicker } from '@/components/ClassPicker';
+import { ClassInfoFrame } from '@/components/ClassInfoFrame';
 import { BottomNav } from '@/components/BottomNav';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
@@ -48,12 +49,14 @@ const Settings = () => {
         <Card>
           <CardHeader>
             <CardTitle>{t.selectClass}</CardTitle>
-            <CardDescription>
-              {class_label || t.noClass}
-              {subgroup_label && ` • ${subgroup_label}`}
-            </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
+            <ClassInfoFrame>
+              <div className="text-lg font-bold text-accent-foreground">
+                {class_label || t.noClass}
+                {subgroup_label && ` • ${subgroup_label}`}
+              </div>
+            </ClassInfoFrame>
             <Button
               onClick={() => setShowClassPicker(true)}
               variant="outline"

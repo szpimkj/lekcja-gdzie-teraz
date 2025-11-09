@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BottomNav } from '@/components/BottomNav';
+import { ClassInfoFrame } from '@/components/ClassInfoFrame';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { Lesson, Weekday } from '@/types/schedule';
@@ -76,11 +77,11 @@ const WeekPlan = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
       {/* Header */}
       <header className="bg-primary border-2 border-primary shadow-soft sticky top-0 z-10">
-        <div className="container max-w-4xl mx-auto px-4 py-4">
-          <div className="text-center">
-            <h1 className="text-lg font-bold text-primary-foreground">{t.showWeekPlan}</h1>
-            <p className="text-sm text-primary-foreground/80">{class_label}</p>
-          </div>
+        <div className="container max-w-4xl mx-auto px-4 py-3">
+          <ClassInfoFrame onClick={() => navigate('/')}>
+            <h1 className="text-lg font-bold text-accent-foreground">{t.showWeekPlan}</h1>
+            <p className="text-sm text-accent-foreground/80">{class_label}</p>
+          </ClassInfoFrame>
         </div>
       </header>
 
