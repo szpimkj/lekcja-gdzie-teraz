@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { LessonCard } from '@/components/LessonCard';
 import { BottomNav } from '@/components/BottomNav';
-import { ClassInfoFrame } from '@/components/ClassInfoFrame';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { getCurrentOrNextLesson } from '@/lib/scheduleLogic';
@@ -279,14 +278,14 @@ const Index = () => {
       {/* Header */}
       <header className="bg-primary border-2 border-primary shadow-soft sticky top-0 z-10">
         <div className="container max-w-2xl mx-auto px-4 py-3">
-          <ClassInfoFrame onClick={() => navigate('/')}>
-            <h1 className="text-lg font-bold text-accent-foreground">
+          <button onClick={() => navigate('/')} className="w-full text-center hover:opacity-90 transition-smooth cursor-pointer">
+            <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground">
               Gdzie ma lekcje klas {class_label || t.noClass}
             </h1>
-            <p className="text-xs text-accent-foreground/80 mt-0.5">
+            <p className="text-sm text-primary-foreground/80 mt-1">
               Zmień klasę
             </p>
-          </ClassInfoFrame>
+          </button>
         </div>
       </header>
 

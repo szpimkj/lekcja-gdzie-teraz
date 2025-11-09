@@ -39,7 +39,7 @@ const Settings = () => {
       {/* Header */}
       <header className="bg-primary border-2 border-primary shadow-soft sticky top-0 z-10">
         <div className="container max-w-2xl mx-auto px-4 py-4">
-          <h1 className="text-lg font-bold text-primary-foreground text-center">{t.settings}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground text-center">{t.settings}</h1>
         </div>
       </header>
 
