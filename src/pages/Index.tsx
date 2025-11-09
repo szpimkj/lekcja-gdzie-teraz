@@ -116,7 +116,8 @@ const Index = () => {
       // Multiple subgroups - show as tiles next to each other
       const firstInfo = currentInfo[0];
       const isBreakTime = firstInfo.status === 'next' || firstInfo.status === 'end-of-day';
-      
+      const isCurrentClass = firstInfo.status === 'current';
+
       return (
         <div className="space-y-4">
           {isBreakTime && (
@@ -124,19 +125,31 @@ const Index = () => {
               <div className="text-sm font-medium text-muted-foreground mb-2">
                 Uff! Masz teraz przerwę
               </div>
+              <div className="text-lg font-semibold text-foreground mb-3">
+                Następne zajęcia zaczynają się za:
+              </div>
               {firstInfo.minutesUntil && (
-                <div className="mb-3">
-                  <div className="text-5xl font-bold text-primary mb-1">
-                    {formatTimeUntil(firstInfo.minutesUntil)}
+                <div className="text-5xl font-bold text-primary">
+                  {formatTimeUntil(firstInfo.minutesUntil)}
+                </div>
+              )}
+            </div>
+          )}
+          {isCurrentClass && (
+            <div className="text-center mb-8 p-6 bg-accent/10 rounded-2xl border-2 border-accent/20">
+              <div className="text-lg font-semibold text-foreground mb-3">
+                Aktualne zajęcia:
+              </div>
+              {firstInfo.minutesRemaining && (
+                <div>
+                  <div className="text-5xl font-bold text-accent mb-1">
+                    {formatTimeUntil(firstInfo.minutesRemaining)}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    do następnych zajęć
+                    pozostało do końca zajęć
                   </div>
                 </div>
               )}
-              <div className="text-lg font-semibold text-foreground">
-                Następne zajęcia to:
-              </div>
             </div>
           )}
           
@@ -211,7 +224,8 @@ const Index = () => {
 
     // Single lesson
     const isBreakTime = currentInfo.status === 'next' || currentInfo.status === 'end-of-day';
-    
+    const isCurrentClass = currentInfo.status === 'current';
+
     return (
       <div className="space-y-4">
         {isBreakTime && (
@@ -219,19 +233,31 @@ const Index = () => {
             <div className="text-sm font-medium text-muted-foreground mb-2">
               Uff! Masz teraz przerwę
             </div>
+            <div className="text-lg font-semibold text-foreground mb-3">
+              Następne zajęcia zaczynają się za:
+            </div>
             {currentInfo.minutesUntil && (
-              <div className="mb-3">
-                <div className="text-5xl font-bold text-primary mb-1">
-                  {formatTimeUntil(currentInfo.minutesUntil)}
+              <div className="text-5xl font-bold text-primary">
+                {formatTimeUntil(currentInfo.minutesUntil)}
+              </div>
+            )}
+          </div>
+        )}
+        {isCurrentClass && (
+          <div className="text-center mb-8 p-6 bg-accent/10 rounded-2xl border-2 border-accent/20">
+            <div className="text-lg font-semibold text-foreground mb-3">
+              Aktualne zajęcia:
+            </div>
+            {currentInfo.minutesRemaining && (
+              <div>
+                <div className="text-5xl font-bold text-accent mb-1">
+                  {formatTimeUntil(currentInfo.minutesRemaining)}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  do następnych zajęć
+                  pozostało do końca zajęć
                 </div>
               </div>
             )}
-            <div className="text-lg font-semibold text-foreground">
-              Następne zajęcia to:
-            </div>
           </div>
         )}
         
