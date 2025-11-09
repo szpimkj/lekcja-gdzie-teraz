@@ -18,8 +18,8 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 215 20% 20%;
 
-    /* Sky Blue - primary, trust, calm */
-    --primary: 210 85% 65%;
+    /* Teal - modern, calm, gender-neutral */
+    --primary: 175 70% 50%;
     --primary-foreground: 0 0% 100%;
 
     /* Peach - warm, gentle */
@@ -66,7 +66,7 @@ All colors MUST be HSL.
 
     --border: 210 15% 90%;
     --input: 210 15% 90%;
-    --ring: 210 85% 65%;
+    --ring: 175 70% 50%;
 
     --radius: 1.5rem;
 
@@ -95,9 +95,9 @@ All colors MUST be HSL.
     --popover: 215 25% 12%;
     --popover-foreground: 210 20% 95%;
 
-    --primary: 214 85% 55%;
+    --primary: 175 65% 45%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 214 85% 70%;
+    --primary-glow: 175 65% 60%;
 
     --secondary: 215 20% 18%;
     --secondary-foreground: 210 20% 95%;
@@ -113,7 +113,7 @@ All colors MUST be HSL.
 
     --border: 215 20% 20%;
     --input: 215 20% 20%;
-    --ring: 214 85% 55%;
+    --ring: 175 65% 45%;
 
     --shadow-soft: 0 2px 8px -2px hsl(0 0% 0% / 0.2);
     --shadow-medium: 0 8px 24px -4px hsl(0 0% 0% / 0.3);

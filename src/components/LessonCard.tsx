@@ -16,47 +16,55 @@ export function LessonCard({ lesson, status, minutesInfo, className = '' }: Less
   const t = translations[language];
 
   return (
-    <Card className={`p-6 transition-smooth hover:shadow-medium ${className}`}>
+    <Card className={`p-6 transition-smooth hover:shadow-medium ${
+      status === 'current' ? 'border-2 border-accent shadow-large' : ''
+    } ${className}`}>
       {status && (
-        <div className={`mb-3 text-sm font-medium ${
-          status === 'current' 
-            ? 'text-accent' 
+        <div className={`mb-4 text-xs font-semibold uppercase tracking-wider ${
+          status === 'current'
+            ? 'text-accent'
             : 'text-primary'
         }`}>
           {status === 'current' ? t.current : t.next}
         </div>
       )}
-      
+
       <div className="space-y-4">
         <div>
-          <h3 className="text-2xl font-bold text-foreground mb-1">{lesson.subject}</h3>
+          <h3 className="text-3xl font-bold text-foreground mb-2">{lesson.subject}</h3>
           {lesson.subgroup_label && (
-            <p className="text-sm text-muted-foreground">{lesson.subgroup_label}</p>
+            <p className="text-sm font-medium text-muted-foreground">{lesson.subgroup_label}</p>
           )}
         </div>
 
-        <div className="flex flex-wrap gap-4 text-sm">
+        <div className="grid grid-cols-1 gap-3 text-sm">
           <div className="flex items-center gap-2 text-muted-foreground">
-            <MapPin className="h-4 w-4" />
-            <span className="font-medium">{lesson.room}</span>
+            <Clock className="h-5 w-5 text-primary" />
+            <span className="font-semibold text-base">{lesson.start_time} - {lesson.end_time}</span>
           </div>
-          
+
           <div className="flex items-center gap-2 text-muted-foreground">
-            <Clock className="h-4 w-4" />
-            <span>{lesson.start_time} - {lesson.end_time}</span>
+            <MapPin className="h-5 w-5 text-primary" />
+            <span className="font-medium text-base">{lesson.room}</span>
           </div>
-          
+
           {lesson.teacher && (
             <div className="flex items-center gap-2 text-muted-foreground">
-              <User className="h-4 w-4" />
-              <span>{lesson.teacher}</span>
+              <User className="h-5 w-5 text-primary" />
+              <span className="font-medium">{lesson.teacher}</span>
             </div>
           )}
         </div>
 
         {minutesInfo && (
-          <div className="pt-2 border-t border-border">
-            <p className="text-sm text-muted-foreground">{minutesInfo}</p>
+          <div className={`mt-4 p-4 rounded-lg text-center ${
+            status === 'current'
+              ? 'bg-accent/20 border-2 border-accent/30'
+              : 'bg-primary/20 border-2 border-primary/30'
+          }`}>
+            <p className={`text-lg font-bold ${
+              status === 'current' ? 'text-accent' : 'text-primary'
+            }`}>{minutesInfo}</p>
           </div>
         )}
       </div>
