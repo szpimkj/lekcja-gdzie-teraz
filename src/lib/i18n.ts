@@ -43,6 +43,7 @@ export const translations = {
     days: 'd',
     hours: 'h',
     minutes: 'min',
+    back: 'Powrót',
   },
   en: {
     mainButton: 'Where is my lesson?',
@@ -88,6 +89,7 @@ export const translations = {
     days: 'd',
     hours: 'h',
     minutes: 'min',
+    back: 'Back',
   },
 };
 
