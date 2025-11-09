@@ -13,6 +13,7 @@ import Header from '@/components/Header';
 import { BreakTimeDisplay, CurrentLessonDisplay } from '@/components/lesson/TimeStatusDisplay';
 import { LessonTimeInfo } from '@/components/lesson/LessonTimeInfo';
 import { MultiLessonCard } from '@/components/lesson/MultiLessonCard';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
@@ -160,7 +161,6 @@ const Index = () => {
       <Header
         title={`${t.whereHasLessonClass} ${class_label || t.noClass}?`}
         onTitleClick={() => navigate('/')}
-        subtitle={t.changeClass}
       />
 
       {/* Main Content */}
@@ -171,6 +171,17 @@ const Index = () => {
             {renderCurrentInfo()}
           </div>
         )}
+
+        {/* Back Button */}
+        <div className="mt-6">
+          <Button
+            onClick={() => navigate('/')}
+            className="w-full"
+            variant="outline"
+          >
+            {t.back}
+          </Button>
+        </div>
       </main>
 
       <BottomNav />
