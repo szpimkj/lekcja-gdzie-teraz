@@ -8,12 +8,16 @@ import { translations } from '@/lib/i18n';
 import { getCurrentWeekday } from '@/lib/scheduleLogic';
 import { Lesson } from '@/types/schedule';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Clock, MapPin } from 'lucide-react';
+import { Clock, MapPin, Maximize, Minimize } from 'lucide-react';
+import { PinDialog } from '@/components/PinDialog';
 
 const TodayPlan = () => {
   const [lessons, setLessons] = useState<Array<{ period: number; start_time: string; end_time: string; lessons: Lesson[] }>>([]);
   const [loading, setLoading] = useState(false);
-  
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [showPinDialog, setShowPinDialog] = useState(false);
+  const [pendingExitFullScreen, setPendingExitFullScreen] = useState(false);
+
   const { class_id, class_label, subgroup_id, language } = useSettingsStore();
   const t = translations[language];
   const navigate = useNavigate();
@@ -65,15 +69,85 @@ const TodayPlan = () => {
     });
   }, [class_id, subgroup_id]);
 
+  // Fullscreen event listener
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      const isCurrentlyFullScreen = !!document.fullscreenElement;
+
+      if (!isCurrentlyFullScreen && isFullScreen) {
+        if (pendingExitFullScreen) {
+          setIsFullScreen(false);
+          setPendingExitFullScreen(false);
+        } else {
+          if (!showPinDialog) {
+            setShowPinDialog(true);
+          }
+          document.documentElement.requestFullscreen().catch((err) => {
+            console.error('Failed to re-enter fullscreen:', err);
+          });
+        }
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
+  }, [isFullScreen, pendingExitFullScreen, showPinDialog]);
+
+  const toggleFullScreen = () => {
+    if (!isFullScreen) {
+      document.documentElement.requestFullscreen();
+      setIsFullScreen(true);
+    } else {
+      setShowPinDialog(true);
+    }
+  };
+
+  const handleCorrectPin = () => {
+    setPendingExitFullScreen(true);
+    setShowPinDialog(false);
+
+    document.exitFullscreen().catch((err) => {
+      console.error('Failed to exit fullscreen:', err);
+      setPendingExitFullScreen(false);
+    });
+  };
+
+  const handlePinCancel = () => {
+    setShowPinDialog(false);
+
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(console.error);
+    }
+  };
+
+  const handleWrongPin = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(console.error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
       {/* Header */}
       <header className="bg-primary border-2 border-primary shadow-soft sticky top-0 z-10">
         <div className="container max-w-2xl mx-auto px-4 py-3">
-          <button onClick={() => navigate('/')} className="w-full text-center hover:opacity-90 transition-smooth cursor-pointer">
-            <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground">{t.showDayPlan}</h1>
-            <p className="text-sm text-primary-foreground/80 mt-1">{class_label}</p>
-          </button>
+          <div className="flex items-center justify-between">
+            <button onClick={() => navigate('/')} className="flex-1 text-center hover:opacity-90 transition-smooth cursor-pointer">
+              <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground">{t.showDayPlan}</h1>
+              <p className="text-sm text-primary-foreground/80 mt-1">{class_label}</p>
+            </button>
+            <button
+              onClick={toggleFullScreen}
+              className="opacity-20 hover:opacity-60 transition-opacity"
+              title={isFullScreen ? "Wyjdź z trybu pełnoekranowego" : "Tryb pełnoekranowy"}
+            >
+              {isFullScreen ? (
+                <Minimize className="h-3 w-3 text-primary-foreground" />
+              ) : (
+                <Maximize className="h-3 w-3 text-primary-foreground" />
+              )}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -132,6 +206,12 @@ const TodayPlan = () => {
       </main>
 
       <BottomNav />
+      <PinDialog
+        open={showPinDialog}
+        onCorrectPin={handleCorrectPin}
+        onCancel={handlePinCancel}
+        onWrongPin={handleWrongPin}
+      />
     </div>
   );
 };
