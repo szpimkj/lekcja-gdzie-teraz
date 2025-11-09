@@ -103,13 +103,12 @@ export default function Header({ title, maxWidth = 'max-w-2xl', children, onTitl
           <div className="flex items-center justify-between gap-4">
             {/* Left side: Date and Time in a Frame */}
             <div className="hidden md:flex items-center gap-3">
-              <div className="border-2 border-primary-foreground/30 rounded-lg px-3 py-1.5 bg-primary-foreground/10 backdrop-blur-sm">
-                <div className="flex items-center gap-3">
+              <div className="border-2 border-primary-foreground/30 rounded-lg px-4 py-2 bg-primary-foreground/10 backdrop-blur-sm">
+                <div className="flex flex-col items-center gap-1">
                   <div className="text-2xl font-black text-primary-foreground tracking-wider">
                     {formattedTime}
                   </div>
-                  <div className="text-primary-foreground/40">•</div>
-                  <div className="text-sm text-primary-foreground/90 whitespace-nowrap">
+                  <div className="text-xs text-primary-foreground/90 whitespace-nowrap">
                     {weekdayName}, {formattedDate}
                   </div>
                 </div>
