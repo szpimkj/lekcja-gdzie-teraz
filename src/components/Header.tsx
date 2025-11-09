@@ -62,7 +62,7 @@ const Header = memo(({ title, maxWidth = 'max-w-2xl', children, onTitleClick, su
   };
   const weekdayName = weekdayNames[language][currentTime.weekday - 1];
   const formattedDate = currentTime.toFormat('dd.MM.yyyy');
-  const formattedTime = currentTime.toFormat('HH:mm:ss');
+  const formattedTime = currentTime.toFormat('HH:mm');
 
   const toggleFullScreen = () => {
     if (!isFullScreen) {
@@ -102,78 +102,68 @@ const Header = memo(({ title, maxWidth = 'max-w-2xl', children, onTitleClick, su
       <header className="bg-primary border-2 border-primary shadow-soft sticky top-0 z-10">
         <div className={`container ${maxWidth} mx-auto px-4 py-3`}>
           <div className="flex items-center justify-between gap-4">
-            {/* Left side: Title and optional children */}
-            <div className="flex items-center gap-3 flex-1">
-              {onTitleClick ? (
-                <button
-                  onClick={onTitleClick}
-                  className="text-center hover:opacity-90 transition-smooth cursor-pointer"
-                >
+            {/* Left side: Title, time, and optional children */}
+            <div className="flex-1">
+              <div className="flex items-center gap-3">
+                {onTitleClick ? (
+                  <button
+                    onClick={onTitleClick}
+                    className="text-left hover:opacity-90 transition-smooth cursor-pointer"
+                  >
+                    <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground">
+                      {title}
+                    </h1>
+                    {subtitle && (
+                      <p className="text-sm text-primary-foreground/80 mt-1">
+                        {subtitle}
+                      </p>
+                    )}
+                  </button>
+                ) : (
                   <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground">
                     {title}
                   </h1>
-                  {subtitle && (
-                    <p className="text-sm text-primary-foreground/80 mt-1">
-                      {subtitle}
-                    </p>
-                  )}
-                </button>
-              ) : (
-                <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground">
-                  {title}
-                </h1>
-              )}
-              {children}
-            </div>
+                )}
+                {children}
+              </div>
 
-            {/* Center/Right: Date and Time in a Frame */}
-            <div className="hidden md:flex items-center gap-3">
-              <div className="border-2 border-primary-foreground/30 rounded-lg px-4 py-2 bg-primary-foreground/10 backdrop-blur-sm">
-                <div className="flex flex-col items-center gap-1">
-                  <div className="text-lg font-bold text-primary-foreground tracking-wider">
+              {/* Time and date aligned with title on desktop */}
+              <div className="hidden md:block mt-2">
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="font-bold text-primary-foreground tracking-wider text-base">
                     {formattedTime}
-                  </div>
-                  <div className="text-xs text-primary-foreground/90 whitespace-nowrap">
+                  </span>
+                  <span className="text-primary-foreground/40">•</span>
+                  <span className="text-primary-foreground/90">
                     {weekdayName}, {formattedDate}
-                  </div>
+                  </span>
                 </div>
               </div>
 
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleFullScreen}
-                className="text-primary-foreground hover:bg-primary-foreground/10 opacity-20 hover:opacity-60 transition-opacity"
-              >
-                {isFullScreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
-              </Button>
-            </div>
-
-            {/* Mobile: Fullscreen button only */}
-            <div className="md:hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleFullScreen}
-                className="text-primary-foreground hover:bg-primary-foreground/10 opacity-20 hover:opacity-60 transition-opacity"
-              >
-                {isFullScreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
-              </Button>
-            </div>
-          </div>
-
-          {/* Mobile: Date and Time below title */}
-          <div className="md:hidden mt-3 flex justify-center">
-            <div className="border-2 border-primary-foreground/30 rounded-lg px-4 py-2 bg-primary-foreground/10 backdrop-blur-sm inline-block">
-              <div className="flex items-center gap-3 text-sm">
-                <span className="font-bold text-primary-foreground tracking-wider">
-                  {formattedTime}
-                </span>
-                <span className="text-primary-foreground/40">•</span>
-                <span className="text-primary-foreground/90">
-                  {weekdayName}, {formattedDate}
-                </span>
+              {/* Mobile: Date and Time below title */}
+              <div className="md:hidden mt-2">
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="font-bold text-primary-foreground tracking-wider">
+                    {formattedTime}
+                  </span>
+                  <span className="text-primary-foreground/40">•</span>
+                  <span className="text-primary-foreground/90">
+                    {weekdayName}, {formattedDate}
+                  </span>
+                </div>
               </div>
+            </div>
+
+            {/* Right: Fullscreen button */}
+            <div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleFullScreen}
+                className="text-primary-foreground hover:bg-primary-foreground/10 opacity-20 hover:opacity-60 transition-opacity"
+              >
+                {isFullScreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+              </Button>
             </div>
           </div>
         </div>

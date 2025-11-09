@@ -105,7 +105,6 @@ const Index = () => {
               startTime={firstInfo.lesson.start_time}
               endTime={firstInfo.lesson.end_time}
               minutesRemaining={firstInfo.minutesRemaining}
-              minutesUntil={firstInfo.minutesUntil}
             />
 
             {/* Lessons as tiles on the right */}
@@ -149,9 +148,7 @@ const Index = () => {
           minutesInfo={
             currentInfo.minutesRemaining
               ? `${t.remaining} ${formatTimeUntil(currentInfo.minutesRemaining, { days: t.days, hours: t.hours, minutes: t.minutes })}`
-              : currentInfo.minutesUntil
-                ? `${t.in} ${formatTimeUntil(currentInfo.minutesUntil, { days: t.days, hours: t.hours, minutes: t.minutes })}`
-                : undefined
+              : undefined
           }
         />
       </div>
