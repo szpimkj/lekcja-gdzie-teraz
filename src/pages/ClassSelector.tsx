@@ -11,11 +11,11 @@ import { PinDialog } from '@/components/PinDialog';
 
 // Minimalistic cheerful colors for class buttons - teaching color harmony
 const CLASS_COLORS = [
-  'bg-accent text-accent-foreground',        // A - Coral (warm)
-  'bg-primary text-primary-foreground',      // B - Sky Blue (cool)
-  'bg-mint text-mint-foreground',            // C - Mint (fresh)
+  'bg-lavender text-lavender-foreground',    // A - Lavender (violet)
+  'bg-accent text-accent-foreground',        // B - Coral (warm)
+  'bg-primary text-primary-foreground',      // C - Teal (cool)
   'bg-info text-info-foreground',            // D - Sunshine (bright)
-  'bg-lavender text-lavender-foreground',    // E - Lavender (creative)
+  'bg-mint text-mint-foreground',            // E - Mint (fresh)
   'bg-secondary text-secondary-foreground',  // F - Peach (gentle)
   'bg-success text-success-foreground',      // G - Sage Green (natural)
   'bg-ocean text-ocean-foreground',          // H - Ocean (deep)

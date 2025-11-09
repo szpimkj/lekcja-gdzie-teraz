@@ -280,7 +280,7 @@ const Index = () => {
         <div className="container max-w-2xl mx-auto px-4 py-3">
           <button onClick={() => navigate('/')} className="w-full text-center hover:opacity-90 transition-smooth cursor-pointer">
             <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground">
-              Gdzie ma lekcje klas {class_label || t.noClass}
+              Gdzie ma lekcje klasa {class_label || t.noClass}?
             </h1>
             <p className="text-sm text-primary-foreground/80 mt-1">
               Zmień klasę
