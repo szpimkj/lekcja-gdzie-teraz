@@ -89,6 +89,16 @@ const Index = () => {
     return () => clearTimeout(redirectTimer);
   }, [navigate]);
 
+  const handleMainButton = () => {
+    if (!class_id) {
+      setShowClassPicker(true);
+      return;
+    }
+
+    const info = getCurrentOrNextLesson(lessons, class_id, subgroup_id, language);
+    setCurrentInfo(info);
+  };
+
   const renderCurrentInfo = () => {
     if (!currentInfo) {
       return (
