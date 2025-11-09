@@ -176,18 +176,25 @@ const Index = () => {
                 <Card key={idx} className={`p-4 transition-smooth hover:shadow-medium ${
                   info.status === 'current' ? 'border-accent border-2' : ''
                 }`}>
-                  <h3 className="font-bold text-base text-foreground mb-2">
+                  {/* Big Classroom Number */}
+                  <div className="bg-primary/20 border border-primary rounded-lg p-3 text-center mb-3">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      <span className="text-xs font-medium text-muted-foreground uppercase">Sala</span>
+                    </div>
+                    <div className="text-3xl font-black text-primary">
+                      {info.lesson.room}
+                    </div>
+                  </div>
+
+                  <h3 className="font-bold text-base text-foreground mb-1">
                     {info.lesson.subject}
                   </h3>
                   {info.lesson.subgroup_label && (
-                    <p className="text-xs text-muted-foreground mb-2">
+                    <p className="text-xs text-muted-foreground">
                       {info.lesson.subgroup_label}
                     </p>
                   )}
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <MapPin className="h-3 w-3" />
-                    <span>{info.lesson.room}</span>
-                  </div>
                 </Card>
               ))}
             </div>

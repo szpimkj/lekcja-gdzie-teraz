@@ -30,6 +30,17 @@ export function LessonCard({ lesson, status, minutesInfo, className = '' }: Less
       )}
 
       <div className="space-y-4">
+        {/* Big Classroom Tile */}
+        <div className="bg-primary/20 border-2 border-primary rounded-2xl p-6 text-center shadow-medium">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <MapPin className="h-8 w-8 text-primary" />
+            <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Sala</span>
+          </div>
+          <div className="text-6xl font-black text-primary mb-1">
+            {lesson.room}
+          </div>
+        </div>
+
         <div>
           <h3 className="text-3xl font-bold text-foreground mb-2">{lesson.subject}</h3>
           {lesson.subgroup_label && (
@@ -41,11 +52,6 @@ export function LessonCard({ lesson, status, minutesInfo, className = '' }: Less
           <div className="flex items-center gap-2 text-muted-foreground">
             <Clock className="h-5 w-5 text-primary" />
             <span className="font-semibold text-base">{lesson.start_time} - {lesson.end_time}</span>
-          </div>
-
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <MapPin className="h-5 w-5 text-primary" />
-            <span className="font-medium text-base">{lesson.room}</span>
           </div>
 
           {lesson.teacher && (
