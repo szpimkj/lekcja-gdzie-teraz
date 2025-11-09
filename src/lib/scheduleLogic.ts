@@ -70,12 +70,20 @@ export function getCurrentOrNextLesson(
     // Weekend - find Monday's first lesson
     const mondayLessons = filterLessons(lessons, class_id, 'MON', subgroup_id);
     if (mondayLessons.length === 0) return null;
-    
+
     const firstLesson = mondayLessons.sort((a, b) => a.period - b.period)[0];
+
+    // Calculate minutes until Monday's lesson
+    const lessonTime = parseTime(firstLesson.start_time);
+    // Find next Monday (weekday 1)
+    const daysUntilMonday = (8 - now.weekday) % 7 || 7; // If Sunday (7), it's 1 day. If Saturday (6), it's 2 days
+    const nextMonday = now.plus({ days: daysUntilMonday }).set({ hour: lessonTime.hour, minute: lessonTime.minute, second: 0 });
+    const minutesUntil = Math.floor(nextMonday.diff(now, 'minutes').minutes);
+
     return {
       lesson: firstLesson,
       status: 'next',
-      minutesUntil: undefined,
+      minutesUntil,
       message: `${translations[language].nextLessonTomorrow}: ${firstLesson.subject} ${firstLesson.start_time} — ${translations[language].room} ${firstLesson.room}`,
     };
   }
