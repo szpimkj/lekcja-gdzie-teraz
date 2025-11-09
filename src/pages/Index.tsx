@@ -7,9 +7,9 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { getCurrentOrNextLesson } from '@/lib/scheduleLogic';
 import { Lesson, CurrentLessonInfo } from '@/types/schedule';
-import { Clock, MapPin, Maximize, Minimize } from 'lucide-react';
+import { Clock, MapPin } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { PinDialog } from '@/components/PinDialog';
+import Header from '@/components/Header';
 
 // Helper function to format time with days, hours, and minutes
 const formatTimeUntil = (minutes: number): string => {
@@ -35,9 +35,6 @@ const Index = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentInfo, setCurrentInfo] = useState<CurrentLessonInfo | CurrentLessonInfo[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [isFullScreen, setIsFullScreen] = useState(false);
-  const [showPinDialog, setShowPinDialog] = useState(false);
-  const [pendingExitFullScreen, setPendingExitFullScreen] = useState(false);
 
   const { class_id, class_label, subgroup_id, subgroup_label, language } = useSettingsStore();
   const t = translations[language];
@@ -91,67 +88,6 @@ const Index = () => {
 
     return () => clearTimeout(redirectTimer);
   }, [navigate]);
-
-  // Fullscreen event listener
-  useEffect(() => {
-    const handleFullScreenChange = () => {
-      const isCurrentlyFullScreen = !!document.fullscreenElement;
-
-      // If we're in fullscreen mode state but browser exited fullscreen
-      if (!isCurrentlyFullScreen && isFullScreen) {
-        if (pendingExitFullScreen) {
-          // This is an authorized exit with correct PIN
-          setIsFullScreen(false);
-          setPendingExitFullScreen(false);
-        } else {
-          // Unauthorized exit attempt - show PIN dialog and re-enter
-          if (!showPinDialog) {
-            setShowPinDialog(true);
-          }
-          // Re-enter fullscreen immediately
-          document.documentElement.requestFullscreen().catch((err) => {
-            console.error('Failed to re-enter fullscreen:', err);
-          });
-        }
-      }
-    };
-
-    document.addEventListener('fullscreenchange', handleFullScreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
-  }, [isFullScreen, pendingExitFullScreen, showPinDialog]);
-
-  const toggleFullScreen = () => {
-    if (!isFullScreen) {
-      document.documentElement.requestFullscreen();
-      setIsFullScreen(true);
-    } else {
-      setShowPinDialog(true);
-    }
-  };
-
-  const handleCorrectPin = () => {
-    setPendingExitFullScreen(true);
-    setShowPinDialog(false);
-
-    document.exitFullscreen().catch((err) => {
-      console.error('Failed to exit fullscreen:', err);
-      setPendingExitFullScreen(false);
-    });
-  };
-
-  const handlePinCancel = () => {
-    setShowPinDialog(false);
-
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(console.error);
-    }
-  };
-
-  const handleWrongPin = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(console.error);
-    }
-  };
 
   const handleMainButton = () => {
     if (!class_id) {
@@ -340,32 +276,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background">
-      {/* Header */}
-      <header className="bg-primary border-2 border-primary shadow-soft sticky top-0 z-10">
-        <div className="container max-w-2xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <button onClick={() => navigate('/')} className="flex-1 text-center hover:opacity-90 transition-smooth cursor-pointer">
-              <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground">
-                Gdzie ma lekcje klasa {class_label || t.noClass}?
-              </h1>
-              <p className="text-sm text-primary-foreground/80 mt-1">
-                Zmień klasę
-              </p>
-            </button>
-            <button
-              onClick={toggleFullScreen}
-              className="opacity-20 hover:opacity-60 transition-opacity"
-              title={isFullScreen ? "Wyjdź z trybu pełnoekranowego" : "Tryb pełnoekranowy"}
-            >
-              {isFullScreen ? (
-                <Minimize className="h-3 w-3 text-primary-foreground" />
-              ) : (
-                <Maximize className="h-3 w-3 text-primary-foreground" />
-              )}
-            </button>
-          </div>
-        </div>
-      </header>
+      <Header
+        title={`Gdzie ma lekcje klasa ${class_label || t.noClass}?`}
+        onTitleClick={() => navigate('/')}
+        subtitle="Zmień klasę"
+      />
 
       {/* Main Content */}
       <main className="container max-w-2xl mx-auto px-4 py-8 pb-28 space-y-6">
@@ -378,12 +293,6 @@ const Index = () => {
       </main>
 
       <BottomNav />
-      <PinDialog
-        open={showPinDialog}
-        onCorrectPin={handleCorrectPin}
-        onCancel={handlePinCancel}
-        onWrongPin={handleWrongPin}
-      />
     </div>
   );
 };

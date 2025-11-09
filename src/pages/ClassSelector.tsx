@@ -1,13 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DateTime } from 'luxon';
 import { ClassInfo } from '@/types/schedule';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
-import { Maximize, Minimize } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PinDialog } from '@/components/PinDialog';
+import Header from '@/components/Header';
 
 // Minimalistic cheerful colors for class buttons - teaching color harmony
 const CLASS_COLORS = [
@@ -25,97 +23,11 @@ const CLASS_COLORS = [
 
 const ClassSelector = () => {
   const [classes, setClasses] = useState<ClassInfo[]>([]);
-  const [currentTime, setCurrentTime] = useState(DateTime.now().setZone('Europe/Warsaw'));
   const [viewMode, setViewMode] = useState<'view1' | 'view2' | 'view3'>('view1');
-  const [isFullScreen, setIsFullScreen] = useState(false);
-  const [showPinDialog, setShowPinDialog] = useState(false);
-  const [pendingExitFullScreen, setPendingExitFullScreen] = useState(false);
-  
+
   const { setClass, setSubgroup, language } = useSettingsStore();
   const t = translations[language];
   const navigate = useNavigate();
-
-  // Update time every second
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(DateTime.now().setZone('Europe/Warsaw'));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Handle fullscreen changes
-  useEffect(() => {
-    const handleFullScreenChange = () => {
-      const isCurrentlyFullScreen = !!document.fullscreenElement;
-
-      // If we're in fullscreen mode state but browser exited fullscreen
-      if (!isCurrentlyFullScreen && isFullScreen) {
-        if (pendingExitFullScreen) {
-          // This is an authorized exit with correct PIN
-          setIsFullScreen(false);
-          setPendingExitFullScreen(false);
-        } else {
-          // Unauthorized exit attempt - show PIN dialog
-          // Don't re-enter fullscreen here; let the useEffect below handle it
-          if (!showPinDialog) {
-            setShowPinDialog(true);
-          }
-        }
-      }
-    };
-
-    document.addEventListener('fullscreenchange', handleFullScreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
-  }, [isFullScreen, pendingExitFullScreen, showPinDialog]);
-
-  // Re-enter fullscreen after PIN dialog is shown
-  useEffect(() => {
-    if (showPinDialog && isFullScreen && !document.fullscreenElement) {
-      // Use requestAnimationFrame to ensure dialog is rendered before re-entering fullscreen
-      requestAnimationFrame(() => {
-        document.documentElement.requestFullscreen().catch((err) => {
-          console.error('Failed to re-enter fullscreen:', err);
-        });
-      });
-    }
-  }, [showPinDialog, isFullScreen]);
-
-  const toggleFullScreen = () => {
-    if (!isFullScreen) {
-      document.documentElement.requestFullscreen();
-      setIsFullScreen(true);
-    } else {
-      setShowPinDialog(true);
-    }
-  };
-
-  const handleCorrectPin = () => {
-    // Set flag to allow exit, then exit fullscreen
-    setPendingExitFullScreen(true);
-    setShowPinDialog(false);
-    
-    document.exitFullscreen().catch((err) => {
-      console.error('Failed to exit fullscreen:', err);
-      setPendingExitFullScreen(false);
-    });
-  };
-
-  const handlePinCancel = () => {
-    // Just close the dialog, stay in fullscreen
-    setShowPinDialog(false);
-    
-    // Ensure we're still in fullscreen
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(console.error);
-    }
-  };
-
-  const handleWrongPin = () => {
-    // Ensure we're still in fullscreen after wrong PIN
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(console.error);
-    }
-  };
 
   useEffect(() => {
     import('@/lib/xmlParser').then(({ getAllClasses }) => {
@@ -209,67 +121,20 @@ const ClassSelector = () => {
     });
   }, [classes]);
 
-  // Format current date and time
-  const weekdayNames = {
-    pl: ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'],
-    en: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-  };
-  const weekdayName = weekdayNames[language][currentTime.weekday - 1];
-  const formattedDate = currentTime.toFormat('dd.MM.yyyy');
-  const formattedTime = currentTime.toFormat('HH:mm:ss');
-
   return (
     <div className="min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background">
-      {/* Compact Banner Header */}
-      <header className="bg-primary border-2 border-primary shadow-soft">
-        <div className="px-4 md:px-6 py-3 flex items-center justify-between">
-          {/* Time/Date - compact on the left */}
-          <div className="hidden md:flex flex-col items-start text-xs text-primary-foreground/80">
-            <div className="font-semibold text-primary-foreground">{formattedTime}</div>
-            <div>{weekdayName}, {formattedDate}</div>
-          </div>
-
-          {/* Main Title - centered and prominent */}
-          <div className="flex-1 text-center">
-            <h1 className="text-2xl md:text-3xl font-bold text-primary-foreground">
-              Wybierz swoją klasę
-            </h1>
-          </div>
-          
-          {/* View selector dropdown */}
-          <div className="absolute top-2 right-2 md:relative md:top-0 md:right-0 flex flex-col items-end gap-1 ml-3">
-            <Select value={viewMode} onValueChange={(value: 'view1' | 'view2' | 'view3') => setViewMode(value)}>
-              <SelectTrigger className="w-24 h-7 text-xs opacity-60 hover:opacity-100 transition-opacity">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="view1">View 1</SelectItem>
-                <SelectItem value="view2">View 2</SelectItem>
-                <SelectItem value="view3">View 3</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <button
-              onClick={toggleFullScreen}
-              className="opacity-20 hover:opacity-60 transition-opacity"
-              title={isFullScreen ? "Wyjdź z trybu pełnoekranowego" : "Tryb pełnoekranowy"}
-            >
-              {isFullScreen ? (
-                <Minimize className="h-3 w-3 text-muted-foreground" />
-              ) : (
-                <Maximize className="h-3 w-3 text-muted-foreground" />
-              )}
-            </button>
-          </div>
-        </div>
-        
-        {/* Mobile time/date - below title */}
-        <div className="md:hidden px-4 pb-2 text-center text-xs text-primary-foreground/80">
-          <span className="font-semibold">{formattedTime}</span>
-          <span className="mx-2">•</span>
-          <span>{weekdayName}, {formattedDate}</span>
-        </div>
-      </header>
+      <Header title="Wybierz swoją klasę">
+        <Select value={viewMode} onValueChange={(value: 'view1' | 'view2' | 'view3') => setViewMode(value)}>
+          <SelectTrigger className="w-24 h-8 text-xs opacity-60 hover:opacity-100 transition-opacity">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="view1">View 1</SelectItem>
+            <SelectItem value="view2">View 2</SelectItem>
+            <SelectItem value="view3">View 3</SelectItem>
+          </SelectContent>
+        </Select>
+      </Header>
 
       {/* Main Content - maximized space for class selection */}
       <main className="flex-1 flex items-center justify-center px-4 md:px-6 py-4 md:py-6 overflow-hidden">
@@ -369,13 +234,6 @@ const ClassSelector = () => {
           )}
         </div>
       </main>
-
-      <PinDialog
-        open={showPinDialog}
-        onCorrectPin={handleCorrectPin}
-        onCancel={handlePinCancel}
-        onWrongPin={handleWrongPin}
-      />
     </div>
   );
 };
