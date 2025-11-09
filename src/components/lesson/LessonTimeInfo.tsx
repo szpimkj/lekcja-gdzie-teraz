@@ -43,14 +43,6 @@ export const LessonTimeInfo = memo(({
             </div>
           </div>
         )}
-        {minutesUntil && (
-          <div className="text-center p-2 bg-primary/20 rounded-lg border border-primary/30">
-            <div className="text-xs text-muted-foreground mb-1">{t.in}</div>
-            <div className="text-2xl font-bold text-primary">
-              {formatTimeUntil(minutesUntil, { days: t.days, hours: t.hours, minutes: t.minutes })}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
