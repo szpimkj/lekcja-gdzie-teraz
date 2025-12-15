@@ -99,8 +99,8 @@ const Index = () => {
             <CurrentLessonDisplay minutesRemaining={firstInfo.minutesRemaining} />
           )}
 
-          <div className="flex gap-4 items-start">
-            {/* Time and period on the left */}
+          <div className="space-y-4">
+            {/* Time and period */}
             <LessonTimeInfo
               period={firstInfo.lesson.period}
               startTime={firstInfo.lesson.start_time}
@@ -108,8 +108,8 @@ const Index = () => {
               minutesRemaining={firstInfo.minutesRemaining}
             />
 
-            {/* Lessons as tiles on the right */}
-            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {/* Lessons stacked vertically */}
+            <div className="space-y-3">
               {currentInfo.map((info, idx) => (
                 <MultiLessonCard
                   key={idx}
