@@ -27,9 +27,8 @@ interface ClassPickerProps {
 export function ClassPicker({ open, onOpenChange }: ClassPickerProps) {
   const [classes, setClasses] = useState<ClassInfo[]>([]);
   const [selectedClass, setSelectedClass] = useState<ClassInfo | null>(null);
-  const [selectedSubgroup, setSelectedSubgroup] = useState<string>('');
   
-  const { setClass, setSubgroup, language } = useSettingsStore();
+  const { setClass, language } = useSettingsStore();
   const t = translations[language];
 
   useEffect(() => {
@@ -44,16 +43,6 @@ export function ClassPicker({ open, onOpenChange }: ClassPickerProps) {
     if (!selectedClass) return;
     
     setClass(selectedClass.class_id, selectedClass.class_label);
-    
-    if (selectedSubgroup) {
-      const subgroup = selectedClass.subgroups?.find(s => s.subgroup_id === selectedSubgroup);
-      if (subgroup) {
-        setSubgroup(subgroup.subgroup_id, subgroup.subgroup_label);
-      }
-    } else {
-      setSubgroup(null, null);
-    }
-    
     onOpenChange(false);
   };
 
@@ -75,7 +64,6 @@ export function ClassPicker({ open, onOpenChange }: ClassPickerProps) {
               onValueChange={(value) => {
                 const cls = classes.find(c => c.class_id === value);
                 setSelectedClass(cls || null);
-                setSelectedSubgroup('');
               }}
             >
               <SelectTrigger id="class">
@@ -91,27 +79,6 @@ export function ClassPicker({ open, onOpenChange }: ClassPickerProps) {
             </Select>
           </div>
 
-          {selectedClass && selectedClass.subgroups && selectedClass.subgroups.length > 0 && (
-            <div className="space-y-2">
-              <Label htmlFor="subgroup">{t.selectSubgroup}</Label>
-              <Select
-                value={selectedSubgroup || 'none'}
-                onValueChange={(val) => setSelectedSubgroup(val === 'none' ? '' : val)}
-              >
-                <SelectTrigger id="subgroup">
-                  <SelectValue placeholder={t.selectSubgroup} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">{t.selectSubgroup}</SelectItem>
-                  {selectedClass.subgroups.map((sub) => (
-                    <SelectItem key={sub.subgroup_id} value={sub.subgroup_id}>
-                      {sub.subgroup_label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
 
           <Button 
             onClick={handleSave} 

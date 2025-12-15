@@ -24,7 +24,6 @@ const Settings = () => {
 
   const {
     class_label,
-    subgroup_label,
     language,
     setLanguage,
     theme,
@@ -50,7 +49,6 @@ const Settings = () => {
             <ClassInfoFrame>
               <div className="text-lg font-bold text-accent-foreground">
                 {class_label || t.noClass}
-                {subgroup_label && ` • ${subgroup_label}`}
               </div>
             </ClassInfoFrame>
             <Button
