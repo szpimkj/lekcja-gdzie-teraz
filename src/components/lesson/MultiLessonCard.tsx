@@ -5,7 +5,7 @@ import { Lesson } from '@/types/schedule';
 
 interface MultiLessonCardProps {
   lesson: Lesson;
-  status: 'current' | 'next';
+  status: 'current' | 'next' | 'end-of-day' | 'no-data';
 }
 
 /**

@@ -20,7 +20,7 @@ const Index = () => {
   const [currentInfo, setCurrentInfo] = useState<CurrentLessonInfo | CurrentLessonInfo[] | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const { class_id, class_label, subgroup_id, subgroup_label, language } = useSettingsStore();
+  const { class_id, class_label, language } = useSettingsStore();
   const t = translations[language];
   const navigate = useNavigate();
 
@@ -54,7 +54,7 @@ const Index = () => {
     if (lessons.length === 0 || !class_id) return;
 
     const updateCurrent = () => {
-      const info = getCurrentOrNextLesson(lessons, class_id, subgroup_id, language);
+      const info = getCurrentOrNextLesson(lessons, class_id, null, language);
       setCurrentInfo(info);
     };
 
@@ -62,7 +62,7 @@ const Index = () => {
     const interval = setInterval(updateCurrent, LESSON_UPDATE_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [lessons, class_id, subgroup_id, language]);
+  }, [lessons, class_id, language]);
 
   // Auto-redirect back to main page after timeout
   useEffect(() => {
@@ -119,13 +119,6 @@ const Index = () => {
               ))}
             </div>
           </div>
-          {!subgroup_id && (
-            <Alert>
-              <AlertDescription className="text-center text-sm">
-                {t.multipleGroups}
-              </AlertDescription>
-            </Alert>
-          )}
         </div>
       );
     }
