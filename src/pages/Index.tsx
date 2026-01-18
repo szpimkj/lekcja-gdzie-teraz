@@ -18,7 +18,6 @@ import { Button } from '@/components/ui/button';
 const Index = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentInfo, setCurrentInfo] = useState<CurrentLessonInfo | CurrentLessonInfo[] | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const { class_id, class_label, language } = useSettingsStore();
   const t = translations[language];
@@ -35,17 +34,10 @@ const Index = () => {
   useEffect(() => {
     if (!class_id) return;
 
-    setLoading(true);
     import('@/lib/xmlParser').then(({ getLessonsForClass }) => {
       getLessonsForClass(class_id)
-        .then((data) => {
-          setLessons(data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error('Failed to load lessons:', err);
-          setLoading(false);
-        });
+        .then((data) => setLessons(data))
+        .catch((err) => console.error('Failed to load lessons:', err));
     });
   }, [class_id]);
 
