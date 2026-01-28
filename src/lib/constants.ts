@@ -6,7 +6,7 @@
 export const TIMEZONE = 'Europe/Warsaw';
 
 // Data source paths
-export const SCHEDULE_XML_PATH = '/data/asctt2012.xml';
+export const SCHEDULE_XML_PATH = import.meta.env.BASE_URL + 'data/asctt2012.xml';
 
 // Update intervals (in milliseconds)
 export const CLOCK_UPDATE_INTERVAL = 1000; // 1 second
