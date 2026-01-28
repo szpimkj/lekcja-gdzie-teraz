@@ -9,7 +9,6 @@ interface LessonTimeInfoProps {
   startTime: string;
   endTime: string;
   minutesRemaining?: number;
-  minutesUntil?: number;
 }
 
 /**
@@ -19,8 +18,7 @@ export const LessonTimeInfo = memo(({
   period,
   startTime,
   endTime,
-  minutesRemaining,
-  minutesUntil
+  minutesRemaining
 }: LessonTimeInfoProps) => {
   const language = useSettingsStore((state) => state.language);
   const t = translations[language];
