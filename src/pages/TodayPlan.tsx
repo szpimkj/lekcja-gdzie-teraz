@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { BottomNav } from '@/components/BottomNav';
 import { useSettingsStore } from '@/stores/settingsStore';
