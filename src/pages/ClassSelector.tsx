@@ -23,7 +23,7 @@ const CLASS_COLORS = [
 
 const ClassSelector = () => {
   const [classes, setClasses] = useState<ClassInfo[]>([]);
-  const [viewMode, setViewMode] = useState<'view1' | 'view2' | 'view3'>('view1');
+  const [viewMode, setViewMode] = useState<'view1' | 'view2' | 'view3'>('view3');
 
   const { setClass, setSubgroup, language } = useSettingsStore();
   const t = translations[language];
