@@ -16,20 +16,24 @@ export const BreakTimeDisplay = memo(({ minutesUntil }: BreakTimeDisplayProps) =
   const t = translations[language];
 
   return (
-    <div className="text-center mb-8 p-6 bg-primary/10 rounded-2xl border-2 border-primary/20">
-      <img 
-        src={playfulHorse} 
-        alt="Playful horse" 
-        className="w-24 h-24 mx-auto mb-3 opacity-80"
-      />
-      <div className="text-sm font-medium text-muted-foreground mb-2">
-        {t.breakTime}
+    <div className="mb-8 p-6 bg-primary/10 rounded-2xl border-2 border-primary/20 flex items-center justify-between gap-4">
+      <div className="text-center flex-1">
+        <div className="text-sm font-medium text-muted-foreground mb-2">
+          {t.breakTime}
+        </div>
+        <div className="text-lg font-semibold text-foreground mb-3">
+          {t.nextLessonStartsIn}
+        </div>
+        <div className="text-5xl font-bold text-primary">
+          {formatTimeUntil(minutesUntil, { days: t.days, hours: t.hours, minutes: t.minutes })}
+        </div>
       </div>
-      <div className="text-lg font-semibold text-foreground mb-3">
-        {t.nextLessonStartsIn}
-      </div>
-      <div className="text-5xl font-bold text-primary">
-        {formatTimeUntil(minutesUntil, { days: t.days, hours: t.hours, minutes: t.minutes })}
+      <div className="bg-primary/10 rounded-xl p-2">
+        <img 
+          src={playfulHorse} 
+          alt="Playful horse" 
+          className="w-24 h-24 opacity-80"
+        />
       </div>
     </div>
   );
