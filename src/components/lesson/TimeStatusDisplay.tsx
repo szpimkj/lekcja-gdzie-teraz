@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { formatTimeUntil } from '@/lib/utils';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
+import playfulHorse from '@/assets/playful-horse.png';
 
 interface BreakTimeDisplayProps {
   minutesUntil: number;
@@ -16,6 +17,11 @@ export const BreakTimeDisplay = memo(({ minutesUntil }: BreakTimeDisplayProps) =
 
   return (
     <div className="text-center mb-8 p-6 bg-primary/10 rounded-2xl border-2 border-primary/20">
+      <img 
+        src={playfulHorse} 
+        alt="Playful horse" 
+        className="w-24 h-24 mx-auto mb-3 opacity-80"
+      />
       <div className="text-sm font-medium text-muted-foreground mb-2">
         {t.breakTime}
       </div>
