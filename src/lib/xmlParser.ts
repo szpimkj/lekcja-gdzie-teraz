@@ -1,5 +1,6 @@
 import { Lesson, ClassInfo, Period, Weekday } from '@/types/schedule';
-import { ROMAN_TO_ARABIC, SCHEDULE_XML_PATH } from './constants';
+import { ROMAN_TO_ARABIC } from './constants';
+import scheduleXml from '@/data/asctt2012.xml?raw';
 
 // Day encoding mapping from binary string to weekday
 const DAY_ENCODING_MAP: Record<string, Weekday> = {
@@ -127,11 +128,8 @@ export async function parseScheduleXML(): Promise<{
   periods: Period[];
 }> {
   try {
-    const response = await fetch(SCHEDULE_XML_PATH);
-    const xmlText = await response.text();
-    
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+    const xmlDoc = parser.parseFromString(scheduleXml, 'text/xml');
     
     // Check for parsing errors
     const parseError = xmlDoc.querySelector('parsererror');
