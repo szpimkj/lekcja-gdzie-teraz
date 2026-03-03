@@ -1,21 +1,3 @@
-
-Otwarto wątek. Jedna przeczytana wiadomość.
-
-Przejdź do treści
-Korzystanie z usługi Gmail z czytnikami ekranu
-1 z 14 905
-Plan
-Odebrane
-Alina Mańka
-	
-Załączniki11:38 (1 godzinę temu)
-	
-	
-do mnie
-Pani Iwono, załączam plik.Pozdrawiam Alina Mańka
- 1 załącznik
-  •  Przeskanowane przez Gmaila
-
 <?xml version="1.0" encoding="windows-1250"?>
 <timetable ascttversion="2026.7.1" importtype="database" options="export:idprefix:%CHRID,import:idprefix:%TEMPID,groupstype1,decimalseparatordot,lessonsincludeclasseswithoutstudents,handlestudentsafterlessons" defaultexport="1" displayname="aSc Timetables 2012 XML" displaycountries="">
    <periods options="canadd,export:silent" columns="period,name,short,starttime,endtime">
@@ -1021,4 +1003,4 @@ Pani Iwono, załączam plik.Pozdrawiam Alina Mańka
    </classroomsupervisions>
 </timetable>
 
-plan II semestr.xml
+
