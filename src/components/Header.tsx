@@ -2,7 +2,6 @@ import { useState, useEffect, memo } from 'react';
 import { DateTime } from 'luxon';
 import { Maximize, Minimize } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PinDialog } from '@/components/PinDialog';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { TIMEZONE, CLOCK_UPDATE_INTERVAL } from '@/lib/constants';
 
@@ -17,8 +16,6 @@ interface HeaderProps {
 const Header = memo(({ title, maxWidth = 'max-w-2xl', children, onTitleClick, subtitle }: HeaderProps) => {
   const [currentTime, setCurrentTime] = useState(DateTime.now().setZone(TIMEZONE));
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [showPinDialog, setShowPinDialog] = useState(false);
-  const [pendingExitFullScreen, setPendingExitFullScreen] = useState(false);
   const { language } = useSettingsStore();
 
   useEffect(() => {
@@ -31,30 +28,12 @@ const Header = memo(({ title, maxWidth = 'max-w-2xl', children, onTitleClick, su
   // Fullscreen event listener
   useEffect(() => {
     const handleFullScreenChange = () => {
-      const isCurrentlyFullScreen = !!document.fullscreenElement;
-
-      // If we're in fullscreen mode state but browser exited fullscreen
-      if (!isCurrentlyFullScreen && isFullScreen) {
-        if (pendingExitFullScreen) {
-          // This is an authorized exit with correct PIN
-          setIsFullScreen(false);
-          setPendingExitFullScreen(false);
-        } else {
-          // Unauthorized exit attempt - show PIN dialog and re-enter
-          if (!showPinDialog) {
-            setShowPinDialog(true);
-          }
-          // Re-enter fullscreen immediately
-          document.documentElement.requestFullscreen().catch((err) => {
-            console.error('Failed to re-enter fullscreen:', err);
-          });
-        }
-      }
+      setIsFullScreen(!!document.fullscreenElement);
     };
 
     document.addEventListener('fullscreenchange', handleFullScreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
-  }, [isFullScreen, pendingExitFullScreen, showPinDialog]);
+  }, []);
 
   const weekdayNames = {
     pl: ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'],
@@ -66,34 +45,9 @@ const Header = memo(({ title, maxWidth = 'max-w-2xl', children, onTitleClick, su
 
   const toggleFullScreen = () => {
     if (!isFullScreen) {
-      document.documentElement.requestFullscreen();
-      setIsFullScreen(true);
+      document.documentElement.requestFullscreen().catch(console.error);
     } else {
-      setShowPinDialog(true);
-    }
-  };
-
-  const handleCorrectPin = () => {
-    setPendingExitFullScreen(true);
-    setShowPinDialog(false);
-
-    document.exitFullscreen().catch((err) => {
-      console.error('Failed to exit fullscreen:', err);
-      setPendingExitFullScreen(false);
-    });
-  };
-
-  const handlePinCancel = () => {
-    setShowPinDialog(false);
-
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(console.error);
-    }
-  };
-
-  const handleWrongPin = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(console.error);
+      document.exitFullscreen().catch(console.error);
     }
   };
 
@@ -169,12 +123,6 @@ const Header = memo(({ title, maxWidth = 'max-w-2xl', children, onTitleClick, su
         </div>
       </header>
 
-      <PinDialog
-        open={showPinDialog}
-        onCorrectPin={handleCorrectPin}
-        onCancel={handlePinCancel}
-        onWrongPin={handleWrongPin}
-      />
     </>
   );
 });
