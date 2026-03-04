@@ -56,8 +56,9 @@ interface PeriodMap {
 function normalizeClassId(className: string): string {
   let normalized = className.trim().toLowerCase();
 
-  // Handle Roman numerals
-  for (const [roman, arabic] of Object.entries(ROMAN_TO_ARABIC)) {
+  // Handle Roman numerals - process longest first to avoid partial matches (e.g., "I" matching before "III")
+  const sortedRomans = Object.entries(ROMAN_TO_ARABIC).sort((a, b) => b[0].length - a[0].length);
+  for (const [roman, arabic] of sortedRomans) {
     normalized = normalized.replace(roman.toLowerCase(), arabic);
   }
 
@@ -74,8 +75,9 @@ function normalizeClassId(className: string): string {
 function normalizeClassLabel(className: string): string {
   let normalized = className.trim();
 
-  // Handle Roman numerals (case insensitive)
-  for (const [roman, arabic] of Object.entries(ROMAN_TO_ARABIC)) {
+  // Handle Roman numerals (case insensitive) - process longest first to avoid partial matches
+  const sortedRomans = Object.entries(ROMAN_TO_ARABIC).sort((a, b) => b[0].length - a[0].length);
+  for (const [roman, arabic] of sortedRomans) {
     const regex = new RegExp(`\\b${roman}\\b`, 'gi');
     normalized = normalized.replace(regex, arabic);
   }
