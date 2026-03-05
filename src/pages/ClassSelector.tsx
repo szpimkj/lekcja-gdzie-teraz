@@ -249,8 +249,8 @@ const ClassSelector = () => {
                   </button>
                 );
               })}
+            </div>
           )}
-          </div>
         </div>
       </main>
     </div>
