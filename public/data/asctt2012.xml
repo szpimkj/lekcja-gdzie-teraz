@@ -1,5 +1,3 @@
-
-Otwarto wątek. Jedna przeczytana wiadomość.
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <timetable importtype="database" options="export:idprefix:%CHRID,import:idprefix:%TEMPID,groupstype1,decimalseparatordot,lessonsincludeclasseswithoutstudents,handlestudentsafterlessons" defaultexport="1" displayname="aSc Timetables 2012 XML" displaycountries="">
   <periods options="canadd,export:silent" columns="period,name,short,starttime,endtime">
