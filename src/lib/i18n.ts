@@ -44,6 +44,9 @@ export const translations = {
     hours: 'h',
     minutes: 'min',
     back: 'Powrót',
+    xmlIncomplete: 'Plik z planem lekcji jest niekompletny — brakuje sekcji z przypisaniami godzin (cards). Wyeksportuj pełny plik z aSc Timetables.',
+    xmlInvalid: 'Plik z planem lekcji jest uszkodzony lub ma nieprawidłowy format.',
+    xmlLoadError: 'Nie udało się wczytać planu lekcji.',
   },
   en: {
     mainButton: 'Where is my lesson?',
@@ -90,6 +93,9 @@ export const translations = {
     hours: 'h',
     minutes: 'min',
     back: 'Back',
+    xmlIncomplete: 'The schedule file is incomplete — missing the cards section with time assignments. Export a full file from aSc Timetables.',
+    xmlInvalid: 'The schedule file is corrupted or has an invalid format.',
+    xmlLoadError: 'Failed to load the schedule file.',
   },
 };
 

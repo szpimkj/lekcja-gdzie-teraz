@@ -130,7 +130,15 @@ export async function parseScheduleXML(): Promise<{
 }> {
   try {
     const response = await fetch(import.meta.env.BASE_URL + 'data/asctt2012.xml');
-    const xmlText = await response.text();
+    let xmlText = await response.text();
+
+    // Strip any junk content before the XML declaration
+    const xmlDeclIndex = xmlText.indexOf('<?xml');
+    if (xmlDeclIndex > 0) {
+      xmlText = xmlText.substring(xmlDeclIndex);
+    } else if (xmlDeclIndex === -1) {
+      throw new Error('XML_INVALID: No XML declaration found in the schedule file.');
+    }
 
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
@@ -138,7 +146,13 @@ export async function parseScheduleXML(): Promise<{
     // Check for parsing errors
     const parseError = xmlDoc.querySelector('parsererror');
     if (parseError) {
-      throw new Error('XML parsing error: ' + parseError.textContent);
+      throw new Error('XML_PARSE_ERROR: ' + parseError.textContent);
+    }
+
+    // Validate that the file contains card entries (time assignments)
+    const cardCount = xmlDoc.querySelectorAll('card').length;
+    if (cardCount === 0) {
+      throw new Error('XML_INCOMPLETE');
     }
     
     // Build lookup maps

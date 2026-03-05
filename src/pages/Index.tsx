@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 const Index = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentInfo, setCurrentInfo] = useState<CurrentLessonInfo | CurrentLessonInfo[] | null>(null);
+  const [xmlError, setXmlError] = useState<string | null>(null);
 
   const { class_id, class_label, language } = useSettingsStore();
   const t = translations[language];
@@ -36,8 +37,20 @@ const Index = () => {
 
     import('@/lib/xmlParser').then(({ getLessonsForClass }) => {
       getLessonsForClass(class_id)
-        .then((data) => setLessons(data))
-        .catch((err) => console.error('Failed to load lessons:', err));
+        .then((data) => {
+          setLessons(data);
+          setXmlError(null);
+        })
+        .catch((err: Error) => {
+          console.error('Failed to load lessons:', err);
+          if (err.message === 'XML_INCOMPLETE') {
+            setXmlError(t.xmlIncomplete);
+          } else if (err.message.startsWith('XML_INVALID') || err.message.startsWith('XML_PARSE_ERROR')) {
+            setXmlError(t.xmlInvalid);
+          } else {
+            setXmlError(t.xmlLoadError);
+          }
+        });
     });
   }, [class_id]);
 
@@ -150,8 +163,15 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container max-w-2xl mx-auto px-4 py-8 pb-28 space-y-6">
+        {/* XML Error Display */}
+        {xmlError && (
+          <Alert variant="destructive" className="mt-8">
+            <AlertDescription>{xmlError}</AlertDescription>
+          </Alert>
+        )}
+
         {/* Current/Next Lesson Display */}
-        {currentInfo && (
+        {!xmlError && currentInfo && (
           <div className="mt-8">
             {renderCurrentInfo()}
           </div>
