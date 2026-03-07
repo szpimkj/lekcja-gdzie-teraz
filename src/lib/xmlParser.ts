@@ -272,7 +272,7 @@ export async function parseScheduleXML(): Promise<{
           end_time: periodInfo.end,
           subject: subject?.name || 'Unknown',
           room: classroom?.short || '',
-          teacher: teacher?.short || '',
+          teacher: teacher?.name || '',
           subgroup_id: subgroupInfo.subgroup_id,
           subgroup_label: subgroupInfo.subgroup_label,
           priority: 0,
