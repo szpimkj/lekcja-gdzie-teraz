@@ -56,8 +56,9 @@ interface PeriodMap {
 function normalizeClassId(className: string): string {
   let normalized = className.trim().toLowerCase();
 
-  // Handle Roman numerals
-  for (const [roman, arabic] of Object.entries(ROMAN_TO_ARABIC)) {
+  // Handle Roman numerals - process longest first to avoid partial matches (e.g., "I" matching before "III")
+  const sortedRomans = Object.entries(ROMAN_TO_ARABIC).sort((a, b) => b[0].length - a[0].length);
+  for (const [roman, arabic] of sortedRomans) {
     normalized = normalized.replace(roman.toLowerCase(), arabic);
   }
 
@@ -74,8 +75,9 @@ function normalizeClassId(className: string): string {
 function normalizeClassLabel(className: string): string {
   let normalized = className.trim();
 
-  // Handle Roman numerals (case insensitive)
-  for (const [roman, arabic] of Object.entries(ROMAN_TO_ARABIC)) {
+  // Handle Roman numerals (case insensitive) - process longest first to avoid partial matches
+  const sortedRomans = Object.entries(ROMAN_TO_ARABIC).sort((a, b) => b[0].length - a[0].length);
+  for (const [roman, arabic] of sortedRomans) {
     const regex = new RegExp(`\\b${roman}\\b`, 'gi');
     normalized = normalized.replace(regex, arabic);
   }
@@ -128,7 +130,15 @@ export async function parseScheduleXML(): Promise<{
 }> {
   try {
     const response = await fetch(import.meta.env.BASE_URL + 'data/asctt2012.xml');
-    const xmlText = await response.text();
+    let xmlText = await response.text();
+
+    // Strip any junk content before the XML declaration
+    const xmlDeclIndex = xmlText.indexOf('<?xml');
+    if (xmlDeclIndex > 0) {
+      xmlText = xmlText.substring(xmlDeclIndex);
+    } else if (xmlDeclIndex === -1) {
+      throw new Error('XML_INVALID: No XML declaration found in the schedule file.');
+    }
 
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
@@ -136,7 +146,13 @@ export async function parseScheduleXML(): Promise<{
     // Check for parsing errors
     const parseError = xmlDoc.querySelector('parsererror');
     if (parseError) {
-      throw new Error('XML parsing error: ' + parseError.textContent);
+      throw new Error('XML_PARSE_ERROR: ' + parseError.textContent);
+    }
+
+    // Validate that the file contains card entries (time assignments)
+    const cardCount = xmlDoc.querySelectorAll('card').length;
+    if (cardCount === 0) {
+      throw new Error('XML_INCOMPLETE');
     }
     
     // Build lookup maps
@@ -170,18 +186,17 @@ export async function parseScheduleXML(): Promise<{
       const name = el.getAttribute('name')!;
       const short = el.getAttribute('short')!;
       
-      // Filter out świetlica (afterschool) classes and MB
-      const nameLower = name.toLowerCase();
-      const shortLower = short.toLowerCase();
-      if (nameLower.includes('św') || shortLower.includes('św') || 
-          nameLower === 'mb' || shortLower === 'mb') {
+      // Only keep classes with numeric grade (1-8)
+      const shortTrimmed = short.trim();
+      const gradeMatch = shortTrimmed.match(/^(\d+)\s/);
+      if (!gradeMatch || parseInt(gradeMatch[1]) < 1 || parseInt(gradeMatch[1]) > 8) {
         return;
       }
       
       classes[id] = {
-        name: normalizeClassLabel(name),
+        name: short.trim() || normalizeClassLabel(name),
         short,
-        classid: normalizeClassId(name),
+        classid: normalizeClassId(short.trim() || name),
       };
     });
     
@@ -257,7 +272,7 @@ export async function parseScheduleXML(): Promise<{
           end_time: periodInfo.end,
           subject: subject?.name || 'Unknown',
           room: classroom?.short || '',
-          teacher: teacher?.short || '',
+          teacher: teacher?.name || '',
           subgroup_id: subgroupInfo.subgroup_id,
           subgroup_label: subgroupInfo.subgroup_label,
           priority: 0,

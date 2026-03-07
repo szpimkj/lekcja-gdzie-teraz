@@ -4,6 +4,7 @@ import { ClassInfo } from '@/types/schedule';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Header from '@/components/Header';
 
@@ -23,6 +24,7 @@ const CLASS_COLORS = [
 
 const ClassSelector = () => {
   const [classes, setClasses] = useState<ClassInfo[]>([]);
+  const [xmlError, setXmlError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'view1' | 'view2' | 'view3'>('view3');
 
   const { setClass, setSubgroup, language } = useSettingsStore();
@@ -32,8 +34,20 @@ const ClassSelector = () => {
   useEffect(() => {
     import('@/lib/xmlParser').then(({ getAllClasses }) => {
       getAllClasses()
-        .then((data) => setClasses(data))
-        .catch(console.error);
+        .then((data) => {
+          setClasses(data);
+          setXmlError(null);
+        })
+        .catch((err: Error) => {
+          console.error(err);
+          if (err.message === 'XML_INCOMPLETE') {
+            setXmlError(t.xmlIncomplete);
+          } else if (err.message.startsWith('XML_INVALID') || err.message.startsWith('XML_PARSE_ERROR')) {
+            setXmlError(t.xmlInvalid);
+          } else {
+            setXmlError(t.xmlLoadError);
+          }
+        });
     });
   }, []);
 
@@ -139,7 +153,12 @@ const ClassSelector = () => {
       {/* Main Content - maximized space for class selection */}
       <main className="flex-1 flex items-center justify-center px-4 md:px-6 py-4 md:py-6 overflow-hidden">
         <div className="w-full max-w-6xl">
-          {viewMode === 'view1' ? (
+          {xmlError ? (
+            <Alert variant="destructive" className="max-w-lg mx-auto">
+              <AlertTitle>⚠️ {language === 'pl' ? 'Błąd pliku' : 'File Error'}</AlertTitle>
+              <AlertDescription>{xmlError}</AlertDescription>
+            </Alert>
+          ) : viewMode === 'view1' ? (
             <div className="space-y-6 md:space-y-8">
               {sortedGrades.map((grade) => (
                 <div key={grade} className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
