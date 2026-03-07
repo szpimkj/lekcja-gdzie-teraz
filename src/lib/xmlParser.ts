@@ -195,9 +195,9 @@ export async function parseScheduleXML(): Promise<{
       }
       
       classes[id] = {
-        name: normalizeClassLabel(name),
+        name: short.trim() || normalizeClassLabel(name),
         short,
-        classid: normalizeClassId(name),
+        classid: normalizeClassId(short.trim() || name),
       };
     });
     
