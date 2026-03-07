@@ -186,11 +186,10 @@ export async function parseScheduleXML(): Promise<{
       const name = el.getAttribute('name')!;
       const short = el.getAttribute('short')!;
       
-      // Filter out świetlica (afterschool) classes and MB
-      const nameLower = name.toLowerCase();
-      const shortLower = short.toLowerCase();
-      if (nameLower.includes('św') || shortLower.includes('św') || 
-          nameLower === 'mb' || shortLower === 'mb') {
+      // Only keep classes with numeric grade (1-8)
+      const shortTrimmed = short.trim();
+      const gradeMatch = shortTrimmed.match(/^(\d+)\s/);
+      if (!gradeMatch || parseInt(gradeMatch[1]) < 1 || parseInt(gradeMatch[1]) > 8) {
         return;
       }
       
