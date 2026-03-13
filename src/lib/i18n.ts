@@ -99,6 +99,9 @@ export const translations = {
     xmlIncomplete: 'The schedule file is incomplete — missing the cards section with time assignments. Export a full file from aSc Timetables.',
     xmlInvalid: 'The schedule file is corrupted or has an invalid format.',
     xmlLoadError: 'Failed to load the schedule file.',
+    substitution: 'Substitution',
+    cancelled: 'Cancelled',
+    substitutionNote: 'Note',
   },
 };
 
