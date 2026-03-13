@@ -13,12 +13,14 @@ interface SettingsState {
   language: Language;
   theme: Theme;
   use24Hour: boolean;
+  substitutionsSheetUrl: string | null;
   
   setClass: (class_id: string, class_label: string) => void;
   setSubgroup: (subgroup_id: string | null, subgroup_label: string | null) => void;
   setLanguage: (language: Language) => void;
   setTheme: (theme: Theme) => void;
   setUse24Hour: (use24Hour: boolean) => void;
+  setSubstitutionsSheetUrl: (url: string | null) => void;
   reset: () => void;
 }
 
