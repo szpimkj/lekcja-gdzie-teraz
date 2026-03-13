@@ -47,6 +47,9 @@ export const translations = {
     xmlIncomplete: 'Plik z planem lekcji jest niekompletny — brakuje sekcji z przypisaniami godzin (cards). Wyeksportuj pełny plik z aSc Timetables.',
     xmlInvalid: 'Plik z planem lekcji jest uszkodzony lub ma nieprawidłowy format.',
     xmlLoadError: 'Nie udało się wczytać planu lekcji.',
+    substitution: 'Zastępstwo',
+    cancelled: 'Odwołane',
+    substitutionNote: 'Uwaga',
   },
   en: {
     mainButton: 'Where is my lesson?',
