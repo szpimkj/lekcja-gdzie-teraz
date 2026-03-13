@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -16,6 +17,7 @@ import { ClassInfoFrame } from '@/components/ClassInfoFrame';
 import { BottomNav } from '@/components/BottomNav';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
+import { clearSubstitutionsCache } from '@/lib/substitutions';
 import Header from '@/components/Header';
 
 const Settings = () => {
@@ -30,9 +32,17 @@ const Settings = () => {
     setTheme,
     use24Hour,
     setUse24Hour,
+    substitutionsSheetUrl,
+    setSubstitutionsSheetUrl,
   } = useSettingsStore();
 
   const t = translations[language];
+
+  const handleSheetUrlChange = (url: string) => {
+    const trimmed = url.trim() || null;
+    setSubstitutionsSheetUrl(trimmed);
+    clearSubstitutionsCache();
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,6 +68,22 @@ const Settings = () => {
             >
               {t.changeClass}
             </Button>
+          </CardContent>
+        </Card>
+
+        {/* Substitutions Sheet URL */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t.substitutionsSheetUrl}</CardTitle>
+            <CardDescription>{t.substitutionsSheetUrlDesc}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Input
+              type="url"
+              placeholder={t.substitutionsSheetUrlPlaceholder}
+              value={substitutionsSheetUrl || ''}
+              onChange={(e) => handleSheetUrlChange(e.target.value)}
+            />
           </CardContent>
         </Card>
 

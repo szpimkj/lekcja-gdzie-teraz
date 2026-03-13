@@ -13,12 +13,14 @@ interface SettingsState {
   language: Language;
   theme: Theme;
   use24Hour: boolean;
+  substitutionsSheetUrl: string | null;
   
   setClass: (class_id: string, class_label: string) => void;
   setSubgroup: (subgroup_id: string | null, subgroup_label: string | null) => void;
   setLanguage: (language: Language) => void;
   setTheme: (theme: Theme) => void;
   setUse24Hour: (use24Hour: boolean) => void;
+  setSubstitutionsSheetUrl: (url: string | null) => void;
   reset: () => void;
 }
 
@@ -32,12 +34,14 @@ export const useSettingsStore = create<SettingsState>()(
       language: 'pl',
       theme: 'system',
       use24Hour: true,
+      substitutionsSheetUrl: null,
       
       setClass: (class_id, class_label) => set({ class_id, class_label }),
       setSubgroup: (subgroup_id, subgroup_label) => set({ subgroup_id, subgroup_label }),
       setLanguage: (language) => set({ language }),
       setTheme: (theme) => set({ theme }),
       setUse24Hour: (use24Hour) => set({ use24Hour }),
+      setSubstitutionsSheetUrl: (url) => set({ substitutionsSheetUrl: url }),
       reset: () => set({
         class_id: null,
         class_label: null,

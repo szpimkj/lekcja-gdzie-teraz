@@ -50,6 +50,9 @@ export const translations = {
     substitution: 'Zastępstwo',
     cancelled: 'Odwołane',
     substitutionNote: 'Uwaga',
+    substitutionsSheetUrl: 'URL arkusza zastępstw',
+    substitutionsSheetUrlDesc: 'Wklej link do opublikowanego arkusza Google (CSV)',
+    substitutionsSheetUrlPlaceholder: 'https://docs.google.com/spreadsheets/d/.../pub?output=csv',
   },
   en: {
     mainButton: 'Where is my lesson?',
@@ -102,6 +105,9 @@ export const translations = {
     substitution: 'Substitution',
     cancelled: 'Cancelled',
     substitutionNote: 'Note',
+    substitutionsSheetUrl: 'Substitutions sheet URL',
+    substitutionsSheetUrlDesc: 'Paste a published Google Sheet link (CSV)',
+    substitutionsSheetUrlPlaceholder: 'https://docs.google.com/spreadsheets/d/.../pub?output=csv',
   },
 };
 

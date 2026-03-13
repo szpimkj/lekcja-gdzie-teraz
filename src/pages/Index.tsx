@@ -5,9 +5,11 @@ import { BottomNav } from '@/components/BottomNav';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { translations } from '@/lib/i18n';
 import { getCurrentOrNextLesson } from '@/lib/scheduleLogic';
+import { loadSubstitutions, getTodayDateString, findSubstitution } from '@/lib/substitutions';
 import { formatTimeUntil } from '@/lib/utils';
 import { LESSON_UPDATE_INTERVAL, AUTO_REDIRECT_TIMEOUT } from '@/lib/constants';
 import { Lesson, CurrentLessonInfo } from '@/types/schedule';
+import { Substitution, AppliedSubstitution } from '@/types/substitution';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Header from '@/components/Header';
 import { BreakTimeDisplay, CurrentLessonDisplay } from '@/components/lesson/TimeStatusDisplay';
@@ -17,44 +19,42 @@ import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [substitutions, setSubstitutions] = useState<Substitution[]>([]);
   const [currentInfo, setCurrentInfo] = useState<CurrentLessonInfo | CurrentLessonInfo[] | null>(null);
   const [xmlError, setXmlError] = useState<string | null>(null);
 
-  const { class_id, class_label, language } = useSettingsStore();
+  const { class_id, class_label, language, substitutionsSheetUrl } = useSettingsStore();
   const t = translations[language];
   const navigate = useNavigate();
 
-  // Redirect to class selector if no class selected
   useEffect(() => {
     if (!class_id) {
       navigate('/');
     }
   }, [class_id, navigate]);
 
-  // Load lessons for selected class
   useEffect(() => {
     if (!class_id) return;
 
-    import('@/lib/xmlParser').then(({ getLessonsForClass }) => {
-      getLessonsForClass(class_id)
-        .then((data) => {
-          setLessons(data);
-          setXmlError(null);
-        })
-        .catch((err: Error) => {
-          console.error('Failed to load lessons:', err);
-          if (err.message === 'XML_INCOMPLETE') {
-            setXmlError(t.xmlIncomplete);
-          } else if (err.message.startsWith('XML_INVALID') || err.message.startsWith('XML_PARSE_ERROR')) {
-            setXmlError(t.xmlInvalid);
-          } else {
-            setXmlError(t.xmlLoadError);
-          }
-        });
+    Promise.all([
+      import('@/lib/xmlParser').then(({ getLessonsForClass }) => getLessonsForClass(class_id)),
+      loadSubstitutions(substitutionsSheetUrl),
+    ]).then(([data, subs]) => {
+      setLessons(data);
+      setSubstitutions(subs);
+      setXmlError(null);
+    }).catch((err: Error) => {
+      console.error('Failed to load lessons:', err);
+      if (err.message === 'XML_INCOMPLETE') {
+        setXmlError(t.xmlIncomplete);
+      } else if (err.message.startsWith('XML_INVALID') || err.message.startsWith('XML_PARSE_ERROR')) {
+        setXmlError(t.xmlInvalid);
+      } else {
+        setXmlError(t.xmlLoadError);
+      }
     });
-  }, [class_id]);
+  }, [class_id, substitutionsSheetUrl]);
 
-  // Update current lesson every minute
   useEffect(() => {
     if (lessons.length === 0 || !class_id) return;
 
@@ -69,7 +69,6 @@ const Index = () => {
     return () => clearInterval(interval);
   }, [lessons, class_id, language]);
 
-  // Auto-redirect back to main page after timeout
   useEffect(() => {
     const redirectTimer = setTimeout(() => {
       navigate('/');
@@ -77,6 +76,23 @@ const Index = () => {
 
     return () => clearTimeout(redirectTimer);
   }, [navigate]);
+
+  /** Get substitution for a lesson based on today's date */
+  const getSubForLesson = (lesson: Lesson): AppliedSubstitution | null => {
+    const todayDate = getTodayDateString();
+    return findSubstitution(lesson, todayDate, substitutions);
+  };
+
+  /** Apply substitution changes to a lesson for display */
+  const applySubToLesson = (lesson: Lesson, sub: AppliedSubstitution | null): Lesson => {
+    if (!sub || sub.substitution.type !== 'change') return lesson;
+    return {
+      ...lesson,
+      subject: sub.substitution.new_subject || lesson.subject,
+      teacher: sub.substitution.new_teacher || lesson.teacher,
+      room: sub.substitution.new_room || lesson.room,
+    };
+  };
 
   const renderCurrentInfo = () => {
     if (!currentInfo) {
@@ -90,7 +106,6 @@ const Index = () => {
     }
 
     if (Array.isArray(currentInfo)) {
-      // Multiple subgroups - show as tiles next to each other
       const firstInfo = currentInfo[0];
       const isBreakTime = firstInfo.status === 'next' || firstInfo.status === 'end-of-day';
       const isCurrentClass = firstInfo.status === 'current';
@@ -105,7 +120,6 @@ const Index = () => {
           )}
 
           <div className="space-y-4">
-            {/* Time and period */}
             <LessonTimeInfo
               period={firstInfo.lesson.period}
               startTime={firstInfo.lesson.start_time}
@@ -113,15 +127,19 @@ const Index = () => {
               minutesRemaining={firstInfo.minutesRemaining}
             />
 
-            {/* Lessons stacked vertically */}
             <div className="space-y-3">
-              {currentInfo.map((info, idx) => (
-                <MultiLessonCard
-                  key={idx}
-                  lesson={info.lesson}
-                  status={info.status}
-                />
-              ))}
+              {currentInfo.map((info, idx) => {
+                const sub = getSubForLesson(info.lesson);
+                const displayLesson = applySubToLesson(info.lesson, sub);
+                return (
+                  <MultiLessonCard
+                    key={idx}
+                    lesson={displayLesson}
+                    status={info.status}
+                    substitution={sub}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>
@@ -129,8 +147,11 @@ const Index = () => {
     }
 
     // Single lesson
+    const sub = getSubForLesson(currentInfo.lesson);
+    const displayLesson = applySubToLesson(currentInfo.lesson, sub);
     const isBreakTime = currentInfo.status === 'next' || currentInfo.status === 'end-of-day';
     const isCurrentClass = currentInfo.status === 'current';
+    const isCancelled = sub?.substitution.type === 'cancel';
 
     return (
       <div className="space-y-4">
@@ -142,10 +163,11 @@ const Index = () => {
         )}
 
         <LessonCard
-          lesson={currentInfo.lesson}
+          lesson={displayLesson}
           status={currentInfo.status === 'current' ? 'current' : currentInfo.status === 'next' ? 'next' : undefined}
+          substitution={sub}
           minutesInfo={
-            currentInfo.minutesRemaining
+            currentInfo.minutesRemaining && !isCancelled
               ? `${t.remaining} ${formatTimeUntil(currentInfo.minutesRemaining, { days: t.days, hours: t.hours, minutes: t.minutes })}`
               : undefined
           }
@@ -161,23 +183,19 @@ const Index = () => {
         onTitleClick={() => navigate('/')}
       />
 
-      {/* Main Content */}
       <main className="container max-w-2xl mx-auto px-4 py-8 pb-28 space-y-6">
-        {/* XML Error Display */}
         {xmlError && (
           <Alert variant="destructive" className="mt-8">
             <AlertDescription>{xmlError}</AlertDescription>
           </Alert>
         )}
 
-        {/* Current/Next Lesson Display */}
         {!xmlError && currentInfo && (
           <div className="mt-8">
             {renderCurrentInfo()}
           </div>
         )}
 
-        {/* Back Button */}
         <div className="mt-6">
           <Button
             onClick={() => navigate('/')}
