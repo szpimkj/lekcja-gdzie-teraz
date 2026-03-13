@@ -1,14 +1,12 @@
 export interface Substitution {
-  /** Date in YYYY-MM-DD format */
-  date: string;
+  /** Start date in YYYY-MM-DD format */
+  date_from: string;
+  /** End date in YYYY-MM-DD format */
+  date_to: string;
   /** Class ID (e.g., "4a") */
   class_id: string;
   /** Period number */
   period: number;
-  /** Original subject name to match against */
-  original_subject?: string;
-  /** Subgroup ID if substitution applies to specific subgroup */
-  subgroup_id?: string;
   /** Type of substitution */
   type: 'change' | 'cancel';
   /** New subject (for type 'change') */
