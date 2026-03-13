@@ -105,6 +105,9 @@ export const translations = {
     substitution: 'Substitution',
     cancelled: 'Cancelled',
     substitutionNote: 'Note',
+    substitutionsSheetUrl: 'Substitutions sheet URL',
+    substitutionsSheetUrlDesc: 'Paste a published Google Sheet link (CSV)',
+    substitutionsSheetUrlPlaceholder: 'https://docs.google.com/spreadsheets/d/.../pub?output=csv',
   },
 };
 
